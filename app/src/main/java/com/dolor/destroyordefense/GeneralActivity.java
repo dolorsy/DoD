@@ -11,7 +11,7 @@ public class GeneralActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.customization_action_bar, menu);
         MenuItem item = menu.findItem(R.id.start_game);
         //TODO: start game
-        //item.setOnMenuItemClickListener((item1 ))
+        //item.setOnMenuItemClickListener();
         return super.onCreateOptionsMenu(menu);
     }
 }

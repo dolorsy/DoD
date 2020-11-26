@@ -29,6 +29,7 @@ public class Game {
 
     private Game() {
         //Todo:here The Round Length
+        //Todo:this timeer should be started when shopping is finished
         gameTimer = new GameTimer(30);
     }
 
