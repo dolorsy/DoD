@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
-import project.Core.Shop;
-import project.Unit.Unit;
+import com.destroyordefend.project.Core.Shop;
+import com.destroyordefend.project.Unit.Unit;
+
 
 public class UnitDetailsActivity extends GeneralActivity {
     TextView name, range, speed, shotSpeed, health, damage, price;
@@ -19,10 +20,10 @@ public class UnitDetailsActivity extends GeneralActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unit_details);
         Shop shop = new Shop();
-        Unit unit = shop.getUnitByType2(getIntent().getStringExtra("type"));
+        Unit unit = shop.getUnitByType(getIntent().getStringExtra("type"));
 
         name = findViewById(R.id.UnitName);
-        name.setText("Name:             " + unit.getUnitId());
+        name.setText("Name:             " + unit.getId());
 
         range = findViewById(R.id.UnitRange);
         range.setText("Range:            " + unit.getRange());

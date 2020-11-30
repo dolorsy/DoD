@@ -1,0 +1,60 @@
+{
+  "Shop": [
+    {
+      "type": "Tank",
+      "SortMap": [
+        "Tank",
+        "Soldier",
+        "BKC"
+      ],
+      "range": "100",
+      "radius": "15",
+      "damage": "75",
+      "shot_speed": "4",
+      "speed": "4",
+      "health": "300"
+    },
+    {
+      "type": "BKC",
+      "SortMap": [
+        "Sniper",
+        "Soldier",
+        "BKC"
+      ],
+      "range": "70",
+      "radius": "7",
+      "damage": "45",
+      "shot_speed": "1",
+      "speed": "10",
+      "health": "175"
+    },
+    {
+      "type": "Soldier",
+      "SortMap": [
+        "Sniper",
+        "Soldier",
+        "BKC"
+      ],
+      "range": "45",
+      "radius": "2",
+      "damage": "30",
+      "shot_speed": "1",
+      "speed": "5",
+      "health": "100"
+    },
+    {
+      "type": "Sniper",
+      "SortMap": [
+        "Sniper",
+        "Soldier",
+        "BKC"
+      ],
+      "range": "300",
+      "radius": "2",
+      "damage": "100",
+      "shot_speed": "2",
+      "speed": "3",
+      "health": "100"
+    }
+  ]
+}

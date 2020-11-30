@@ -5,59 +5,127 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ColorQuickActionBackground"
+    android:padding="4dp"
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/player_linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints">
-
-        <TextView
-            android:id="@+id/player_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="player ahmad"
-            android:textColor="@color/ColorWhite"
-            android:textSize="32sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/player_points"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/player_points"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:text="ahmad points"
-            android:textColor="@color/ColorWhite"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/shop_recycler_view"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingLeft="12dp"
-        android:textColor="@color/ColorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/player_linearLayout"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="MissingConstraints"
-        tools:listitem="@layout/list_item" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <TextView
+            android:id="@+id/PlayerPlacing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="PlayerPlacing"
+            android:textColor="@color/ColorNotColor3"
+            android:textSize="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/AttackerPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:text="AttackerPlayer"
+            android:textColor="@color/ColorWhite"
+            android:textSize="28dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/PlayerPlacing" />
+
+
+        <TextView
+            android:id="@+id/AttackerPlayerNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:paddingStart="4dp"
+            android:text="AttackerPlayerNumber:"
+            android:textColor="@color/ColorWhite"
+            android:textSize="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/AttackerPlayer"
+            tools:ignore="RtlSymmetry"
+            tools:layout_editor_absoluteX="-16dp" />
+
+        <EditText
+            android:id="@+id/AttackerPlayerNumberInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:hint="PlayerNumber"
+            android:inputType="number"
+            android:textColor="@color/ColorWhite"
+            android:textColorHint="@color/ColorTextHint"
+            android:textSize="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/AttackerPlayerNumber"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <TextView
+            android:id="@+id/DefenderPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:text="AttackerPlayer"
+            android:textColor="@color/ColorWhite"
+            android:textSize="28dp"
+            app:layout_constraintTop_toBottomOf="@+id/AttackerPlayerNumberInput"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <TextView
+            android:id="@+id/DefenderPlayerNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:paddingStart="4dp"
+            android:text="AttackerPlayerNumber:"
+            android:textColor="@color/ColorWhite"
+            android:textSize="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/DefenderPlayer"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <EditText
+            android:id="@+id/DefenderPlayerNumberInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:hint="PlayerNumber"
+            android:inputType="number"
+            android:textColor="@color/ColorWhite"
+            android:textColorHint="@color/ColorTextHint"
+            android:textSize="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/DefenderPlayerNumber"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <Button
+            android:id="@+id/ToAddingPlayersButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/ColorAccent"
+            android:text="Next"
+            android:textColor="@color/ColorQuickActionBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.949"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/DefenderPlayerNumberInput"
+            app:layout_constraintVertical_bias="0.071"
+            tools:ignore="UnknownId" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

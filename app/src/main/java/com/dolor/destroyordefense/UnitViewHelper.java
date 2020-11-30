@@ -1,9 +1,10 @@
 package com.dolor.destroyordefense;
 
 
+import com.destroyordefend.project.Unit.Unit;
+
 import java.util.TreeSet;
 
-import project.Unit.Unit;
 
 public class UnitViewHelper extends Unit {
     private int counter = 0;
