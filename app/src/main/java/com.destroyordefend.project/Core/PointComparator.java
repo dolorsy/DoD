@@ -7,7 +7,7 @@ import java.util.Comparator;
 public class PointComparator implements Comparator<Unit> {
     @Override
     public int compare(Unit o1, Unit o2) {
-        if (o1.getId() != o2.getId()) {
+        if (o1.id != o2.id) {
             //Todo: For Delete
             return 1;
         }

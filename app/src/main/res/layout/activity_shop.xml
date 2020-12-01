@@ -25,7 +25,7 @@
             android:padding="8dp"
             android:text="player ahmad"
             android:textColor="@color/ColorWhite"
-            android:textSize="32sp"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/player_points"
             app:layout_constraintHorizontal_bias="0.0"
@@ -37,12 +37,15 @@
             android:id="@+id/player_points"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginEnd="4dp"
             android:gravity="center"
+            android:textSize="20dp"
             android:text="ahmad points"
             android:textColor="@color/ColorWhite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView

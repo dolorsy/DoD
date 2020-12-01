@@ -12,15 +12,11 @@ import static com.destroyordefend.project.Core.Game.game;
 import static com.destroyordefend.project.Main.p;
 
 
-public class Unit implements TacticAble, MovementAble, Barrier {
+public class Unit implements TacticAble, MovementAble, Barrier, UnitSetHelper {
 
-    final int attackSpeed = 4;
-    int id;
-    int radius;
-    int range;
-    String type;//type unit
+    public final int id;
     Movement movement;
-    TreeSet<Unit> treeSetUnit;
+    TreeSet<Unit> treeSetUnit = new TreeSet<>(new PointComparator());
     Point point;
     String role;
     UnitValues values;
@@ -29,60 +25,19 @@ public class Unit implements TacticAble, MovementAble, Barrier {
     String playerId;
     List<String> SortMap;
 
-    Unit() {
-        treeSetUnit = new TreeSet<>(new PointComparator());
-    }
-
-    //Constructor 1
-    public Unit(int id, int radius, int range, String type, int speed, int shot_speed, int damage, int health) {
-        this.id = id;
-        this.radius = radius;
-        this.range = range;
-        this.type = type;
-        values = new UnitValues(speed, shot_speed, damage, health);
-        this.point = new Point(0, 0);
-
-    }
-
-    //Constructor 2
-    public Unit(int id, int radius, int range, String type, UnitValues values, TreeSet<Unit> treeSetUnit) {
-        this.id = id;
-        this.radius = radius;
-        this.range = range;
-        this.type = type;
-        this.values = values;
-        this.treeSetUnit = treeSetUnit;
-        this.point = new Point(0, 0);
-    }
-
     //Copy Constructor
     public Unit(Unit unit) {
-        this.treeSetUnit = new TreeSet<>(new PointComparator());
+        this.treeSetUnit.addAll(unit.treeSetUnit);
         this.id = unit.id;
-        this.radius = unit.radius;
-        this.range = unit.range;
-        this.type = unit.type;
         this.movement = unit.movement;
-        this.treeSetUnit = unit.treeSetUnit;
-        this.point = unit.point;
+        this.point = new Point(unit.point);
         this.role = unit.getRole();
-        this.values = unit.values;
+        this.values = new UnitValues(unit.values);
     }
+
 
     public List<String> getSortMap() {
         return SortMap;
-    }
-
-    public void setSortMap(List<String> sortMap) {
-        SortMap = sortMap;
-    }
-
-    public String getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(String playerId) {
-        this.playerId = playerId;
     }
 
     public Damaging getDamaging() {
@@ -91,39 +46,65 @@ public class Unit implements TacticAble, MovementAble, Barrier {
         return damaging;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    //Set
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Tactic getTactic() {
         return tactic;
     }
 
+    public Unit(int id, UnitValues values) {
+        this.id = id;
+        this.values = new UnitValues(values);
+    }
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
     public void print() {
         System.out.println(
                 "id: " + id
-                        + "rad: " + radius
-                        + "rang: " + range
-                        + "type: " + type
-                        + "Movement: " + movement.toString()
-                        + "inRange: " + treeSetUnit.toString()
-                        + "point: " + point.asString()
-                        + "Role: " + role
-                        + "valeus: " + values.asString());
-
+//                +"\nrad: "  + radius
+//                +"\nrang: " + range
+//                +"\ntype: " + type
+                        + "\nMovement: " + movement.toString()
+                        + "\ninRange: " + treeSetUnit.toString()
+                        + "\npoint: " + point.asString()
+                        + "\nRole: " + role
+                        + "\nvaleus: " + values.asString());
     }
+
+    //Set
+
+//    public void setRadius(int radius) {
+//        this.radius = radius;
+//    }
+//
+//    public void setRange(int range) {
+//        this.range = range;
+//    }
+//
+//    public void setType(String type) {
+//        this.type = type;
+//    }
 
     public void setMovement(Movement movement) {
         this.movement = movement;
     }
 
+    public void setTreeSetUnit(TreeSet<Unit> treeSetUnit) {
+        this.treeSetUnit = treeSetUnit;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public void setPoint(Point point) {
         this.point = point;
+    }
+
+    public void setValues(UnitValues values) {
+        this.values = values;
     }
 
     //Get
@@ -131,36 +112,25 @@ public class Unit implements TacticAble, MovementAble, Barrier {
         return id;
     }
 
-    @Override
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
+//    @Override
+//    public int getRadius() {
+//        return radius;
+//    }
 
     public int getRange() {
-        return range;
+        return values.range;
     }
 
-    public void setRange(int range) {
-        this.range = range;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+//    public String getType() {
+//        return type;
+//    }
 
     public void Move() {
-
+        p("Move id: " + id + " x,y ");
 
         Point p = this.movement.GetNextPoint(this);
-        p("Move id: " + getId() + " x,y " + p.asString());
+
+        p("Move id: " + id + " x,y " + p.asString());
         Barrier factor = Movement.canSetUnitPlace(p, this);
         if (factor.getClass().getName().equals(Terrain.class.getName())) {
             Terrain terrain = (Terrain) factor;
@@ -171,36 +141,36 @@ public class Unit implements TacticAble, MovementAble, Barrier {
             }
         }
         this.setPoint(p);
+        this.updateLeftAndRight();
     }
 
     public TreeSet<Unit> getTreeSetUnit() {
         return treeSetUnit;
     }
 
-    public void setTreeSetUnit(TreeSet<Unit> treeSetUnit) {
-        this.treeSetUnit = treeSetUnit;
-    }
 
     public String getRole() {
         return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public UnitValues getValues() {
         return values;
     }
 
-    public void setValues(UnitValues values) {
-        this.values = values;
-    }
-
     //Get Position Unit
     @Override
     public Point getPosition() {
         return point;
+    }
+
+    @Override
+    public int getRadius() {
+        return 0;
+    }
+
+    @Override
+    public String getType() {
+        return null;
     }
 
     //Method TacticAble Class
@@ -232,14 +202,28 @@ public class Unit implements TacticAble, MovementAble, Barrier {
         return this.values.health;
     }
 
+    @Override
+    public boolean isAlive() {
+        return getHealth() > 0;
+    }
+
+    public void setSpeed(int speed) {
+
+        this.values.speed = speed;
+    }
+
+    public Unit giveValues(UnitValues unitValues) {
+        this.values = unitValues;
+        return this;
+    }
+
     public void setHealth(int health) {
 
         this.values.health = health;
     }
 
-    @Override
-    public boolean isAlive() {
-        return getHealth() > 0;
+    public double getShot_speed() {
+        return this.values.shot_speed;
     }
 
     //Get
@@ -248,17 +232,8 @@ public class Unit implements TacticAble, MovementAble, Barrier {
         return this.values.speed;
     }
 
-    public void setSpeed(int speed) {
-
-        this.values.speed = speed;
-    }
-
     public int getCurrentSpeed() {
         return this.values.currentSpeed;
-    }
-
-    public int getShot_speed() {
-        return this.values.shot_speed;
     }
 
     public void setShot_speed(int shot_speed) {
@@ -269,39 +244,163 @@ public class Unit implements TacticAble, MovementAble, Barrier {
     void onDestroy() {
         game.DeleteUnit(this);
         game.UpdateState();
+
+
+    }
+
+    @Override
+    public Unit getLeftUnit() {
+        return leftAndRight.get("left");
+    }
+
+    @Override
+    public void setLeftUnit(Unit unit) {
+        leftAndRight.put("left", unit);
+    }
+
+    @Override
+    public Unit getRightUnit() {
+        return leftAndRight.get("right");
+    }
+
+    @Override
+    public void setRightUnit(Unit unit) {
+        leftAndRight.put("right", unit);
+    }
+
+    @Override
+    public void updateLeftAndRight() {
+        //Todo: need to check;
+
+        if (needSwapWithLeft()) {
+            swapWithLeft();
+        } else if (needSwapWithRight()) {
+            swapWithRight();
+        }
+
+    }
+
+    @Override
+    public boolean needSwapWithLeft() {
+        //Todo: need to check;
+
+        return (getLeft() == getLeftUnit().getRight() && getDown() < getLeftUnit().getUp()) ||
+                this.getLeft() < getLeftUnit().getRight();
+    }
+
+    @Override
+    public boolean needSwapWithRight() {
+        //Todo: need to check;
+
+        return (getRight() == getRightUnit().getLeft() && getUp() < getRightUnit().getDown()) ||
+                getRight() > getRightUnit().getLeft();
+    }
+
+    @Override
+    public void swapWithLeft() {
+        //Todo: need to check;
+
+        Unit temp = getLeftUnit();
+        setLeftUnit(getLeftUnit().getLeftUnit());
+        temp.setRightUnit(getRightUnit());
+        setRightUnit(temp);
+        temp.setLeftUnit(this);
+    }
+
+    @Override
+    public void swapWithRight() {
+        //Todo: need to check;
+
+        Unit temp = getRightUnit();
+        setRightUnit(getRightUnit().getRightUnit());
+        temp.setLeftUnit(getLeftUnit());
+        setLeftUnit(temp);
+        temp.setRightUnit(this);
     }
 
     public void UpdateRange() {
-        p("Update Range id: " + getId());
+        p("Update Range id: " + id);
         Tactic.updateRange(this);
-        p("in range id " + getId() + "c: " + treeSetUnit.size());
         this.tactic.SortMap(this);
         //Todo::Make sure the call by referance
     }
 
-    public class UnitValues {
-
-        //Object for Singleton
-
-        int speed;
-        int shot_speed;
-        int damage;
+    public static class UnitValues {
+        String type;
+        String name;
         int health;
-        int currentSpeed;
+        double armor;
+        int damage;
+        int range;
+        double shot_speed;
+        int radius;
+        int speed;
+        List<String> sortMap;
+        int price;
+        int currentSpeed;//12
 
-        //constructor Empty
-        private UnitValues() {
-        }
 
-        //Constructor UnitValues Class
-        public UnitValues(int speed, int shot_speed, int damage, int health) {
-            this.speed = speed;
-            this.shot_speed = shot_speed;
-            this.damage = damage;
+        public UnitValues(String type, String name, int health, double armor, int damage, int range, double shot_speed, int radius, int speed, List<String> SortMap, int price) {
+            this.type = type;
+            this.name = name;
             this.health = health;
-            this.currentSpeed = speed;
+            this.armor = armor;
+            this.damage = damage;
+            this.range = range;
+            this.shot_speed = shot_speed;
+            this.radius = radius;
+            this.speed = speed;
+            this.sortMap = SortMap;
+            this.price = price;
+            currentSpeed = speed;
         }
 
+        public UnitValues(UnitValues unitValues) {
+            this(unitValues.type,
+                    unitValues.name,
+                    unitValues.health,
+                    unitValues.armor,
+                    unitValues.damage,
+                    unitValues.range,
+                    unitValues.shot_speed,
+                    unitValues.radius,
+                    unitValues.speed,
+                    unitValues.sortMap,
+                    unitValues.price);
+        }
+
+        /* public UnitValues(JSONObject unit){
+             org.json.simple.JSONObject unit1 = (org.json.simple.JSONObject) a;
+              type = (String) unit1.get("type");
+
+              name = (String) unit1.get("name");
+
+              health = (String) unit1.get("health");
+
+              armor = (String) unit1.get("armor");
+
+              damage = (String) unit1.get("damage");
+
+              range = (String) unit1.get("range");
+
+              shot_speed = (String) unit1.get("shot_speed");
+
+              radius = (String) unit1.get("radius");
+
+              speed = (String) unit1.get("speed");
+
+              sortMap = new ArrayList<>();
+
+             JSONArray sMap = (JSONArray) unit1.get("SortMap");
+             System.out.println(sMap);
+             for (Object c : sMap) {
+                 String s = c.toString();
+                 ortMap.add(s);
+             }
+             String price = (String) unit1.get("price");
+
+         }
+ */
         public String asString() {
             return String.valueOf(
                     "Speed: " + speed
@@ -309,6 +408,53 @@ public class Unit implements TacticAble, MovementAble, Barrier {
 
         }
 
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getPrice() {
+            return price;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public int getHealth() {
+            return health;
+        }
+
+        public double getArmor() {
+            return armor;
+        }
+
+        public int getDamage() {
+            return damage;
+        }
+
+        public int getRange() {
+            return range;
+        }
+
+        public double getShot_speed() {
+            return shot_speed;
+        }
+
+        public int getRadius() {
+            return radius;
+        }
+
+        public int getSpeed() {
+            return speed;
+        }
+
+        public int getCurrentSpeed() {
+            return currentSpeed;
+        }
     }
 
     public class Damaging implements Damage {
@@ -321,16 +467,14 @@ public class Unit implements TacticAble, MovementAble, Barrier {
 
         @Override
         public void DoDamage() {
-            if (treeSetUnit.size() != 0)
-                treeSetUnit.first().getDamaging().AcceptDamage(this.getDamage());
-
+            treeSetUnit.first().getDamaging().AcceptDamage(this.getDamage());
 
         }
 
         @Override
         public int getDamage() {
             if (canShot == 0) {
-                p("Do damage id: " + getId());
+                p("Do damage id: " + id);
                 canShot = 4;
                 return values.damage;
 
@@ -345,14 +489,12 @@ public class Unit implements TacticAble, MovementAble, Barrier {
 
             if ((values.health - damage) <= 0) {
                 values.health = 0;
-                p("Removed id: " + getId());
-                onDestroy();
-
             } else {
                 values.health -= damage;
             }
-            p("Accept Damage id: " + getId() + " new Helth\n\n: " + values.health);
+            p("Accept Damage id: " + id + "new Helth: " + values.health);
         }
+
 
         @Override
         public void decrease() {

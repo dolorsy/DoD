@@ -13,7 +13,7 @@ public interface Movement {
         Unit temp = new Unit(unit);
         temp.setPoint(point);
         for (Unit u : game.getAllUnits()) {
-            if (!(u.isSharedWith(temp)) && u.getId() != temp.getId()) {
+            if (!(u.isSharedWith(temp)) && u.id != temp.id) {
                 return u;
             }
         }

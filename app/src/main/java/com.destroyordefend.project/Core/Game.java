@@ -13,6 +13,7 @@ import com.destroyordefend.project.utility.GameTimer;
 import com.destroyordefend.project.utility.UpdateMapAsyncTask;
 import com.destroyordefend.project.utility.UpdateRangeAsyncTask;
 
+import java.util.Iterator;
 import java.util.TreeSet;
 
 import static com.destroyordefend.project.Main.p;
@@ -32,7 +33,6 @@ public class Game {
     TreeSet<Unit> allUnits;
     TreeSet<Terrain> terrains;
     States GameState = States.NotRunning;
-    Shop shop = new Shop();
     Team attackers;
     Team defenders;
     int attackerNumber, defenderNumber;
@@ -58,7 +58,6 @@ public class Game {
         //Todo:Here We Should get the number of Players
         attackers.addPlayer(new Player(initPoints, Player.TeamRole.Attacker, "attacker"));
         defenders.addPlayer(new Player(initPoints, Player.TeamRole.Defender, "defender"));
-        unit = new Unit(5, 5, 2, "TT", 5, 5, 5, 50);
         unit.setTreeSetUnit(new TreeSet<>(new PointComparator()));
         p(unit.getTreeSetUnit().toString());
         attackers.getTeamPlayers().get(0).addArmy(new Unit(unit)
@@ -137,7 +136,6 @@ public class Game {
 
         for (Player player : attackers.getTeamPlayers()) {
             for (Unit unit : player.getArmy()) {
-                unit.setId(7);
                 unit.setHealth(10);
                 unit.setRole(player.role.name());
                 allUnits.add(unit);
@@ -170,12 +168,21 @@ public class Game {
         return this.allUnits;
     }
 
-    public Shop getShop() {
-        return shop;
-    }
-
     protected void AddAnewPlayer() {
         //Todo:  we should Get The Name of Player and the Role (Attacker / Defender) and set In the following constructor
+
+    }
+
+    PlayerIterator temp = null;
+
+    protected void CreateTeamsStage() {
+
+        /**
+         * for the number of players we will call AddPlayer
+         * inside the loop the Statement will be
+         * AddAnewPlayer();
+         */
+
 
     }
 
@@ -184,7 +191,7 @@ public class Game {
         int x = 10, y = 10, r = 5;
         for (Player p : defenders.getTeamPlayers()) {
             for (Unit u : p.getArmy()) {
-                p("PS " + u.getId());
+                p("PS " + u.id);
                 Movement.canSetUnitPlace(new Point(x, y), u);
                 x += 100;
                 y += 100;
@@ -200,18 +207,7 @@ public class Game {
 
     }
 
-    protected void CreateTeamsStage() {
-
-        /**
-         * for the number of players we will call AddPlayer
-         * inside the loop the Statement will be
-         * AddAnewPlayer();
-         */
-
-
-    }
-
-    protected void StartShoppingStage() {
+    /*protected void StartShoppingStage() {
 
         for (Player player : attackers.getTeamPlayers()) {
             player.CreateArmy();
@@ -223,7 +219,7 @@ public class Game {
         }
 
     }
-
+*/
     public void UpdateState() {
         boolean stillInGame = false;
 
@@ -249,17 +245,17 @@ public class Game {
     }
 
     public void DeleteUnit(Unit unit) {
-        p("Removed id " + unit.getId());
+        p("Removed id " + unit.id);
         p(unit.getRole());
         if (unit.getRole().equals("Attacker")) {
             for (Player player : attackers.getTeamPlayers()) {
-                if (player.getId().equals(unit.getPlayerId())) {
+                if (player.getName().equals(unit.getPlayerId())) {
                     player.getArmy().remove(unit);
                 }
             }
         } else {
             for (Player player : defenders.getTeamPlayers()) {
-                if (player.getId().equals(unit.getPlayerId())) {
+                if (player.getName().equals(unit.getPlayerId())) {
                     player.getArmy().remove(unit);
                 }
             }
@@ -268,5 +264,41 @@ public class Game {
 
     }
 
+    public PlayerIterator playerIterator() {
+        if (temp == null || !temp.hasNext())
+            return temp = new PlayerIterator();
+        else
+            return temp;
+    }
 
+    class PlayerIterator implements Iterator<Player> {
+
+        Iterator<Player> attack = attackers.getTeamPlayers().iterator(),
+                defend = defenders.getTeamPlayers().iterator();
+        Player.TeamRole role = Player.TeamRole.Attacker;
+
+        @Override
+        public boolean hasNext() {
+            return defend.hasNext() || attack.hasNext();
+        }
+
+        @Override
+        public Player next() {
+            if (role == Player.TeamRole.Attacker) {
+                role = Player.TeamRole.Defender;
+                if (defend.hasNext())
+                    return defend.next();
+                else if (attack.hasNext())
+                    return attack.next();
+            } else {
+                role = Player.TeamRole.Attacker;
+                if (attack.hasNext())
+                    return attack.next();
+                else if (defend.hasNext())
+                    return
+                            defend.next();
+            }
+            return null;
+        }
+    }
 }

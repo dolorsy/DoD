@@ -9,7 +9,7 @@ import static com.destroyordefend.project.Main.p;
 
 public interface Tactic {
     static void updateRange(Unit t) {
-        p("Update Range :" + t.getId() + " all : " + t.getTreeSetUnit().size());
+        p("Update Range :" + t.id + " all : " + t.getTreeSetUnit().size());
         TreeSet<Unit> unitTreeSet = new TreeSet<>(game.getAllUnits());
         unitTreeSet.removeIf(
                 unit -> unit.getLeft() > t.getRight() + t.getRange() ||

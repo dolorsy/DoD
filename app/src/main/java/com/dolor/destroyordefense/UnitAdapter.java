@@ -1,7 +1,6 @@
 package com.dolor.destroyordefense;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +9,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.destroyordefend.project.Unit.Unit;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
-    List<UnitViewHelper> unitList;
+    List<Unit> unitList;
     Context context;
 
-    public UnitAdapter(List<UnitViewHelper> unitList, Context context) {
-        this.unitList = unitList;
+    public UnitAdapter(List<Unit> unitList, Context context, int playerPoint) {
+        this.unitList = new ArrayList<>(unitList);
+        this.unitList.removeIf(unit -> unit.getValues().getPrice() > playerPoint);
         this.context = context;
     }
 
@@ -30,7 +33,7 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UnitHolder holder, int position) {
-        UnitViewHelper unit = unitList.get(position);
+        Unit unit = unitList.get(position);
         holder.bind(unit);
     }
 
@@ -39,8 +42,9 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
         return unitList.size();
     }
 
-    public void setUnitList(List<UnitViewHelper> list) {
-        this.unitList = list;
+    public void setUnitList(List<Unit> list, int playerPoints) {
+        this.unitList = new ArrayList<>(list);
+        unitList.removeIf(unit -> unit.getValues().getPrice() > playerPoints);
     }
 
     public class UnitHolder extends RecyclerView.ViewHolder {
@@ -53,10 +57,12 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
 
         }
 
-        public void bind(UnitViewHelper unit) {
-            unitName.setText(unit.getType() + "");
-            unitPrice.setText(unit.getHealth() + "");
-            itemView.setOnClickListener(v -> context.startActivity(new Intent(context, UnitDetailsActivity.class).putExtra("type", unit.getType())));
+        public void bind(Unit unit) {
+            unitName.setText(unit.getValues().getName());
+            unitPrice.setText("" + unit.getHealth());
+            itemView.setOnClickListener(v -> {
+                ((ShopActivity) context).show(unit);
+            });
         }
     }
 

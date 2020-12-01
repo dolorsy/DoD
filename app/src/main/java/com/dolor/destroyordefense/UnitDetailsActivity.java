@@ -12,18 +12,18 @@ import com.destroyordefend.project.Unit.Unit;
 
 public class UnitDetailsActivity extends GeneralActivity {
     TextView name, range, speed, shotSpeed, health, damage, price;
-    Button next;
+    Button buy;
 
     @SuppressLint({"SetTextI18n", "CutPasteId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unit_details);
-        Shop shop = new Shop();
-        Unit unit = shop.getUnitByType(getIntent().getStringExtra("type"));
+        Shop shop = Shop.getInstance();
+        Unit unit = shop.getUnitByName(getIntent().getStringExtra("name"));
 
         name = findViewById(R.id.UnitName);
-        name.setText("Name:             " + unit.getId());
+        name.setText("Name:             " + unit.getValues().getName());
 
         range = findViewById(R.id.UnitRange);
         range.setText("Range:            " + unit.getRange());
@@ -41,15 +41,29 @@ public class UnitDetailsActivity extends GeneralActivity {
         damage.setText("Damage:         " + unit.getDamage());
 
         price = findViewById(R.id.UnitPrice);
-        price.setText("Price:                 " + unit.getType());
+        price.setText("Price:                 " + unit.getValues().getPrice());
 
-        next = findViewById(R.id.next);
+        buy = findViewById(R.id.buy);
 
         //TODO get player and add if for check player points
 
 
-        next.setOnClickListener(v -> startActivity(new Intent(this, ArenaActivity.class)));
+      /*  buy.setOnClickListener(v ->
+                {
+                    try {
+                        ShopActivity.currentPlayer.BuyAnArmy(unit);
+                        ShopActivity.currentPlayer = ShopActivity.playerIterator.next();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    onBackPressed();
+                    finish();
+                }
+        );*/
+    }
 
-
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, ShopActivity.class));
     }
 }

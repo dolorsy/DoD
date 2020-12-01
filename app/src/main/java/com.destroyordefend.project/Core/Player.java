@@ -5,26 +5,23 @@ import com.destroyordefend.project.Unit.Unit;
 
 import java.util.TreeSet;
 
-import static com.destroyordefend.project.Core.Game.game;
-
 
 public class Player {
     int Points;
     //Is he attacker or Defender
     TeamRole role;
-    String id;
+    String name;
     TreeSet<Unit> army;
 
-    public Player(int points, TeamRole role, String id) {
+    public Player(int points, TeamRole role, String name) {
         army = new TreeSet<>(new PointComparator());
-
         Points = points;
         this.role = role;
-        this.id = id;
+        this.name = name;
     }
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
     public TreeSet<Unit> getArmy() {
@@ -46,7 +43,11 @@ public class Player {
         Points -= price;
     }
 
-    public void CreateArmy() {
+    public int getPoints() {
+        return Points;
+    }
+
+    /*public void CreateArmy() {
         //Todo:Here we will Shopping
         while (this.Points > 0)
             try {
@@ -58,12 +59,12 @@ public class Player {
 
 
     }
-
-    public void BuyAnArmy(Unit unit, int price) throws PointsCantByuException {
+*/
+    public void BuyAnArmy(Unit unit) throws PointsCantByuException {
         try {
-            if (this.Points < game.getShop().getLowestPrice())
+            if (this.Points < Shop.getInstance().getLowestPrice())
                 throw new PointsCantByuException("You Have only " + this.Points + ", this cant buy anything!!");
-            cutPrice(price);
+            cutPrice(unit.getValues().getPrice());
             unit.setRole(this.role.name());
             army.add(unit);
         } catch (NoEnoughPointsException ex) {

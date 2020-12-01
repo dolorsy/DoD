@@ -1,19 +1,30 @@
 package com.dolor.destroyordefense;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.destroyordefend.project.Core.Game;
+import com.destroyordefend.project.Core.Player;
+import com.destroyordefend.project.Core.Shop;
 import com.destroyordefend.project.Unit.Unit;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 
 public class ShopActivity extends GeneralActivity {
     RecyclerView recyclerView;
     UnitAdapter unitAdapter;
+    public static Iterator<Player> playerIterator = Game.getGame().playerIterator();
+    public static MutableLiveData<Player> currentPlayer = new MutableLiveData<>();
+    TextView playerName;
+    Shop shop = Shop.getInstance();
+    TextView playerPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,21 +32,39 @@ public class ShopActivity extends GeneralActivity {
         setContentView(R.layout.activity_shop);
 
         recyclerView = findViewById(R.id.shop_recycler_view);
+        playerName = findViewById(R.id.player_name);
+        playerPoints = findViewById(R.id.player_points);
+        currentPlayer.observe(this, player -> {
 
-        List<UnitViewHelper> list = new ArrayList<>();
-        //todo : get from shop json
-        list.add(new UnitViewHelper(new Unit(20, 34, 55, "tk", 130, 140, 440, 90)));
-        list.add(new UnitViewHelper(new Unit(21, 74, 75, "ks", 70, 120, 440, 95)));
-        list.add(new UnitViewHelper(new Unit(22, 84, 78, "tt", 50, 200, 460, 95)));
-        list.add(new UnitViewHelper(new Unit(53, 24, 65, "kt", 40, 100, 160, 0)));
-        list.add(new UnitViewHelper(new Unit(54, 2114, 765, "kt", 430, 1300, 1603, 932)));
-        list.add(new UnitViewHelper(new Unit(55, 274, 65, "tt", 450, 100, 760, 392)));
-        list.add(new UnitViewHelper(new Unit(56, 27, 6985, "ks", 4580, 1050, 1640, 923)));
-        list.add(new UnitViewHelper(new Unit(57, 247, 695, "tt", 4054, 10650, 1670, 92)));
+            playerName.setText(player.getName());
+            playerPoints.setText(player.getPoints() + "");
+            unitAdapter.setUnitList(shop.getShopUnits(), currentPlayer.getValue().getPoints());
+        });
+        if (currentPlayer.getValue() == null)
+            currentPlayer.setValue(playerIterator.next());
 
-        unitAdapter = new UnitAdapter(list, this);
+        playerName.setText(currentPlayer.getValue().getName());
+        playerPoints.setText(currentPlayer.getValue().getPoints() + "");
+        unitAdapter = new UnitAdapter(shop.getShopUnits(), this, currentPlayer.getValue().getPoints());
         recyclerView.setAdapter(unitAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 
+    public void show(Unit unit) {
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Dialog))
+                .setTitle(unit.getValues().getName())
+                .setMessage(unit.getValues().toString())
+                .setPositiveButton("Buy", (dialog, whichButton) -> {
+                    try {
+                        currentPlayer.getValue().BuyAnArmy(unit);
+                        currentPlayer.setValue(playerIterator.next());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create().show();
     }
 }

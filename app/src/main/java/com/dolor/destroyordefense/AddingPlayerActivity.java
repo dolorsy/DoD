@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,23 +22,29 @@ public class AddingPlayerActivity extends AppCompatActivity {
     TextView role;
 
     View.OnClickListener toShopClickListener = v -> {
-        startActivity(new Intent(AddingPlayerActivity.this, ShopActivity.class));
+        try {
+            getPlayerFromView();
+            startActivity(new Intent(AddingPlayerActivity.this, ShopActivity.class));
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Invalid data", Toast.LENGTH_LONG).show();
+        }
     };
 
     View.OnClickListener addClickListener = v -> {
-
-        int points = Integer.parseInt(point.getText().toString());
-        String name = this.name.getText().toString();
-        Player p = new Player(points, Player.TeamRole.valueOf(role.getText().toString()), name);
-        Game.getGame().addPlayer(p);
-        if (Game.getGame().fullDefender())
-            role.setText("Attacker");
-        AddingPlayerActivity.this.name.setText("");
-        AddingPlayerActivity.this.point.setText("");
-        Log.i("", "addListener: " + Game.getGame().oneMore());
-        if (Game.getGame().oneMore()) {
-            toShopAddButton.setText("Shop");
-            toShopAddButton.setOnClickListener(toShopClickListener);
+        try {
+            getPlayerFromView();
+            if (Game.getGame().fullDefender())
+                role.setText("Attacker");
+            AddingPlayerActivity.this.name.setText("");
+            AddingPlayerActivity.this.point.setText("");
+            Log.i("", "addListener: " + Game.getGame().oneMore());
+            if (Game.getGame().oneMore()) {
+                toShopAddButton.setText("Shop");
+                toShopAddButton.setOnClickListener(toShopClickListener);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Invalid data", Toast.LENGTH_LONG).show();
         }
     };
 
@@ -52,5 +59,14 @@ public class AddingPlayerActivity extends AppCompatActivity {
         role = findViewById(R.id.Role);
         toShopAddButton.setOnClickListener(addClickListener);
 
+    }
+
+    private void getPlayerFromView() throws Exception {
+        if (point.getText().toString().isEmpty() || name.getText().toString().isEmpty())
+            throw new Exception();
+        int points = Integer.parseInt(point.getText().toString());
+        String name = this.name.getText().toString();
+        Player p = new Player(points, Player.TeamRole.valueOf(role.getText().toString()), name);
+        Game.getGame().addPlayer(p);
     }
 }

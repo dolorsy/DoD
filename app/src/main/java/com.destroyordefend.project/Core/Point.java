@@ -12,6 +12,10 @@ public class Point {
         this.y = y;
     }
 
+    public Point(Point p) {
+        this(p.x, p.y);
+    }
+
     public String asString() {
         return String.valueOf('(' + String.valueOf(x) + ',' + String.valueOf(y) + ')');
     }
