@@ -17,7 +17,7 @@ public class Unit implements TacticAble, MovementAble, Barrier, UnitSetHelper {
     public final int id;
     Movement movement;
     TreeSet<Unit> treeSetUnit = new TreeSet<>(new PointComparator());
-    Point point;
+    Point point = new Point();
     String role;
     UnitValues values;
     Tactic tactic;

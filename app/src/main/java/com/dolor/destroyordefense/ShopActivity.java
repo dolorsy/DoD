@@ -58,6 +58,7 @@ public class ShopActivity extends GeneralActivity {
                     try {
                         currentPlayer.getValue().BuyAnArmy(unit);
                         currentPlayer.setValue(playerIterator.next());
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

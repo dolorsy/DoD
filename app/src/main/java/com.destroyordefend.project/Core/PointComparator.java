@@ -11,6 +11,8 @@ public class PointComparator implements Comparator<Unit> {
             //Todo: For Delete
             return 1;
         }
+        if (o1 == null || o2 == null || o1.getPosition() == null || o2.getPosition() == null)
+            return 1;
         if (o1.getPosition().getX() > o2.getPosition().getX())
             return 1;
 

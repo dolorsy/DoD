@@ -265,10 +265,9 @@ public class Game {
     }
 
     public PlayerIterator playerIterator() {
-        if (temp == null || !temp.hasNext())
+        if (temp == null)
             return temp = new PlayerIterator();
-        else
-            return temp;
+        return temp;
     }
 
     class PlayerIterator implements Iterator<Player> {
@@ -286,19 +285,15 @@ public class Game {
         public Player next() {
             if (role == Player.TeamRole.Attacker) {
                 role = Player.TeamRole.Defender;
-                if (defend.hasNext())
-                    return defend.next();
-                else if (attack.hasNext())
-                    return attack.next();
+                if (!defend.hasNext())
+                    defend = defenders.getTeamPlayers().iterator();
+                return defend.next();
             } else {
                 role = Player.TeamRole.Attacker;
-                if (attack.hasNext())
-                    return attack.next();
-                else if (defend.hasNext())
-                    return
-                            defend.next();
+                if (!attack.hasNext())
+                    attack = attackers.getTeamPlayers().iterator();
+                return attack.next();
             }
-            return null;
         }
     }
 }
