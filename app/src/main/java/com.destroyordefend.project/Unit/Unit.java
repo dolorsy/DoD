@@ -25,7 +25,12 @@ public class Unit implements TacticAble, MovementAble, Barrier, UnitSetHelper {
     String playerId;
     List<String> SortMap;
 
-    //Copy Constructor
+    public Unit(Point point, String Type) {
+        this.point = point;
+        this.values.type = Type;
+        id = 0;
+    }
+
     public Unit(Unit unit) {
         this.treeSetUnit.addAll(unit.treeSetUnit);
         this.id = unit.id;
