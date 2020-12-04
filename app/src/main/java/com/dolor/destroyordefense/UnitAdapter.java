@@ -63,9 +63,9 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
 
         public void bind(Unit.UnitValues unit) {
             unitName.setText(unit.getName());
-            unitPrice.setText("" + unit.getPrice());
-            unitHealth.setText("" + unit.getHealth());
-            unitDamage.setText("" + unit.getDamage());
+            unitPrice.setText("Price:" + unit.getPrice());
+            unitHealth.setText("Health:" + unit.getHealth());
+            unitDamage.setText("Damage:" + unit.getDamage());
             itemView.setOnClickListener(v -> {
                 Log.d(TAG, "bind: " + unit);
                 ((ShopActivity) context).show(AndroidManger.lastBoughtUnit = new Unit(unit));
