@@ -64,7 +64,7 @@ public class ShopActivity extends GeneralActivity {
                     dialog.dismiss();
                 })*/;
         View v = getLayoutInflater().inflate(R.layout.activity_unit_details, null);
-        TextView name, range, speed, shotSpeed, health, damage, armor, currentSpeed, sortedMap, price;
+        TextView name, range, speed, shotSpeed, health, damage, armor, radius, sortedMap, price;
         Button next;
 
         name = v.findViewById(R.id.UnitName);
@@ -88,8 +88,8 @@ public class ShopActivity extends GeneralActivity {
         armor = v.findViewById(R.id.UnitArmor);
         armor.setText("Price:                " + unit.getArmor());
 
-        currentSpeed = v.findViewById(R.id.UnitCurrentSpeed);
-        currentSpeed.setText("currentSpeed:    " + unit.getCurrentSpeed());
+        radius = v.findViewById(R.id.UnitRadius);
+        radius.setText("Radius:    " + unit.getRadius());
 
         sortedMap = v.findViewById(R.id.UnitSortedMap);
         sortedMap.setText("Targets:    " + unit.getSortMap());
