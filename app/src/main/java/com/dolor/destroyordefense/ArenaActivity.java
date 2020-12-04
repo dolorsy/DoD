@@ -53,8 +53,8 @@ public class ArenaActivity extends GeneralActivity {
         Log.d("TAG", "onCreate: " + Game.getGame().getAllUnits().size());
         //  updateScreen(Game.getGame().getAllUnits());
         constraintLayout.setOnClickListener(v -> {
-            lastBoughtUnit.setPoint(new com.destroyordefend.project.Core.Point(seekX, seekY));
-            System.out.println(lastBoughtUnit.getValues().getName());
+            lastBoughtUnit.setPosition(new com.destroyordefend.project.Core.Point(seekX, seekY));
+            // System.out.println(lastBoughtUnit.getValues().getName());
             Game.getGame().getAllUnits().add(lastBoughtUnit);
             Log.i("TAG", "onClick: " + lastBoughtUnit.getPosition());
             Toast.makeText(this, "unit is bought", Toast.LENGTH_SHORT).show();
@@ -142,7 +142,7 @@ public class ArenaActivity extends GeneralActivity {
 
         public MyImage(Unit unit) {
             this.imageView = new ImageView(ArenaActivity.this);
-            this.imageView.setImageResource(getSuitableImage(unit.getValues().getName()));
+            this.imageView.setImageResource(getSuitableImage(unit.getName()));
             this.width = unit.getRadius() * 2 * square;
             this.center = unit.getPosition();
             this.center.setX(center.getX() - (seekX / 11));

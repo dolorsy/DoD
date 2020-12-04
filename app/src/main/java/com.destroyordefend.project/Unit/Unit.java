@@ -7,8 +7,9 @@ import com.destroyordefend.project.Movement.Movement;
 import com.destroyordefend.project.Tactic.Tactic;
 import com.destroyordefend.project.utility.IdGenerator;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -327,7 +328,7 @@ public class Unit implements TacticAble, MovementAble, Barrier, UnitSetHelper {
                     unitValues.price);
         }
 
-        public UnitValues(JSONObject unit) {
+        public UnitValues(JSONObject unit) throws JSONException {
             name = (String) unit.get("name");
             health = Integer.parseInt((String) unit.get("health"));
             armor = Integer.parseInt((String) unit.get("armor"));

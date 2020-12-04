@@ -23,7 +23,7 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
 
     public UnitAdapter(List<Unit> unitList, Context context, int playerPoint) {
         this.unitList = new ArrayList<>(unitList);
-        this.unitList.removeIf(unit -> unit.getValues().getPrice() > playerPoint);
+        this.unitList.removeIf(unit -> unit.getPrice() > playerPoint);
         this.context = context;
     }
 
@@ -47,22 +47,25 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
 
     public void setUnitList(List<Unit> list, int playerPoints) {
         this.unitList = new ArrayList<>(list);
-        unitList.removeIf(unit -> unit.getValues().getPrice() > playerPoints);
+        unitList.removeIf(unit -> unit.getPrice() > playerPoints);
     }
 
     public class UnitHolder extends RecyclerView.ViewHolder {
-        TextView unitName, unitPrice;
+        TextView unitName, unitPrice, unitDamage, unitHealth;
 
         public UnitHolder(@NonNull View itemView) {
             super(itemView);
             unitName = itemView.findViewById(R.id.unit_name);
             unitPrice = itemView.findViewById(R.id.unit_price);
-
+            unitDamage = itemView.findViewById(R.id.unit_damage);
+            unitHealth = itemView.findViewById(R.id.unit_health);
         }
 
         public void bind(Unit unit) {
-            unitName.setText(unit.getValues().getName());
-            unitPrice.setText("" + unit.getHealth());
+            unitName.setText(unit.getName());
+            unitPrice.setText("" + unit.getPrice());
+            unitHealth.setText("" + unit.getHealth());
+            unitDamage.setText("" + unit.getDamage());
             itemView.setOnClickListener(v -> {
                 Log.d(TAG, "bind: " + unit);
                 ((ShopActivity) context).show(AndroidManger.lastBoughtUnit = unit);

@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.destroyordefend.project.Core.Shop;
@@ -46,12 +46,12 @@ public class ShopActivity extends GeneralActivity {
         playerPoints.setText(currentPlayer.getValue().getPoints() + "");
         unitAdapter = new UnitAdapter(shop.getShopUnits(), this, currentPlayer.getValue().getPoints());
         recyclerView.setAdapter(unitAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }
 
     public void show(Unit unit) {
         new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Dialog))
-                .setTitle(unit.getValues().getName())
+                .setTitle(unit.getName())
                 .setMessage(unit.getValues().toString())
                 .setPositiveButton("Buy", (dialog, whichButton) -> {
                     try {
