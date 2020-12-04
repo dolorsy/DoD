@@ -45,16 +45,16 @@ public class Log {
 
     public static void m(Unit unit) {
         writeFile("time :" + Game.getGame().getGameTimer().getCurrentSecond() +
-                "  Unit_id :" + unit.id +
+                "  Unit_id :" + unit.getId() +
                 "   X :" + unit.getPosition().getX() + " " +
                 "   Y :" + unit.getPosition().getY() + "\n" + "---------------" + "\n", logFile);
     }
 
     public static void d(Unit unit_One, Unit unit_Two) {
         File file = new File("logFile.txt");
-        writeFile("Unit_id :" + unit_One.id +
+        writeFile("Unit_id :" + unit_One.getId() +
                 " Attack " +
-                "Unit_id :" + unit_Two.id + "\n" + "---------------" + "\n", file);
+                "Unit_id :" + unit_Two.getId() + "\n" + "---------------" + "\n", file);
     }
 
     public static void h(Unit unit) {

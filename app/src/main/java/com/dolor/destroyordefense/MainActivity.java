@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.destroyordefend.project.Core.Game;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         defenderNumber = findViewById(R.id.DefenderPlayerNumberInput);
         next.setOnClickListener(v ->
         {
-          /*  int an, dn;
+            int an, dn;
             try {
                 an = Integer.parseInt(attackerNumber.getText().toString());
                 dn = Integer.parseInt(defenderNumber.getText().toString());
@@ -32,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Invalid Input", Toast.LENGTH_LONG).show();
                 return;
             }
-            Game.getGame().setPlayersNumbers(an, dn);*/
+            Game.getGame().setPlayersNumbers(an, dn);
             //  startActivity(new Intent(MainActivity.this, AddingPlayerActivity.class));
-            startActivity(new Intent(MainActivity.this, ArenaActivity.class));
+            startActivity(new Intent(MainActivity.this, AddingPlayerActivity.class));
 
             finish();
         });

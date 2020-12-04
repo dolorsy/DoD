@@ -2,22 +2,19 @@ package com.destroyordefend.project.Unit;
 
 
 import com.destroyordefend.project.Core.Point;
-
-import java.util.Comparator;
+import com.destroyordefend.project.utility.IdGenerator;
 
 public class Terrain implements Barrier {
 
+    public final int id;
+    private Point point;
+    private int speedFactory;
+    private int radius;
+    private int health;
+    private String name;
 
-    Point point;
-    int speedFactory;
-    int radius;
-    int health;
-    String type;
-
-    public Terrain(Point point, int speedFactory, String type) {
-        this.point = point;
-        this.speedFactory = speedFactory;
-        this.type = type;
+    public Terrain() {
+        id = IdGenerator.generate(this);
     }
 
     @Override
@@ -34,34 +31,23 @@ public class Terrain implements Barrier {
         return radius;
     }
 
+    public Terrain(Point point, int speedFactory, String name) {
+        this();
+        this.point = point;
+        this.speedFactory = speedFactory;
+        this.name = name;
+    }
+
     public int getSpeedFactory() {
         return speedFactory;
     }
 
-    public String getType() {
-        return type;
+    @Override
+    public int getId() {
+        return id;
     }
 
-    public static class TerrainComparator implements Comparator<Terrain> {
-        @Override
-        public int compare(Terrain o1, Terrain o2) {
-
-            if (o1.getPosition().getX() > o2.getPosition().getX())
-                return 1;
-
-            else if (o1.getPosition().getX() == o2.getPosition().getX()) {
-                // if (o1.getPosition().getY() > o2.getPosition().getY())
-                return o1.getPosition().getY() - o2.getPosition().getY();
-            }
-
-            if (o1.getPosition().getX() == o2.getPosition().getX() && o1.getPosition().getY() == o2.getPosition().getY())
-                return 0;
-
-
-            return -1;
-
-        }
+    public String getName() {
+        return name;
     }
-
-
 }

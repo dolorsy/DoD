@@ -1,112 +1,137 @@
 package com.dolor.destroyordefense;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.destroyordefend.project.Core.Game;
 import com.destroyordefend.project.Unit.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import static com.dolor.destroyordefense.AndroidManger.lastBoughtUnit;
+
 public class ArenaActivity extends GeneralActivity {
-    int x = 30, y = 40, maxX, maxY;
-    int seekx, seeky;
-    ConstraintLayout rl;
-    SeekBar Xseek, Yseek;
+    int maxX, maxY;
+    int seekX, seekY;
+    ConstraintLayout constraintLayout;
+    SeekBar xSeekBar, ySeekBar;
     List<MyImage> inRange = new ArrayList<>();
+    int square;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_arena);
-        Xseek = (SeekBar) findViewById(R.id.XseekBar);
-        Yseek = (SeekBar) findViewById(R.id.YseekBar);
+        setTitle("X : " + seekX + " Y : " + seekY);
 
-        rl = (ConstraintLayout) findViewById(R.id.my_relative_layout);
+        xSeekBar = (SeekBar) findViewById(R.id.XseekBar);
+        ySeekBar = (SeekBar) findViewById(R.id.YseekBar);
+
+        constraintLayout = (ConstraintLayout) findViewById(R.id.my_relative_layout);
         Display mdisp = getWindowManager().getDefaultDisplay();
         Point mdispSize = new Point();
         mdisp.getSize(mdispSize);
+        square = mdispSize.x / 11;
+
         maxX = mdispSize.x;
         maxY = mdispSize.y;
-
-        rl.setX(0);
-        rl.setY(0);
-
-        rl.setOnClickListener(v -> {
-
-
+        constraintLayout.setX(0);
+        constraintLayout.setY(0);
+        System.out.println(maxX);
+        System.out.println(maxY);
+        System.out.println(square);
+        Log.d("TAG", "onCreate: " + Game.getGame().getAllUnits().size());
+        //  updateScreen(Game.getGame().getAllUnits());
+        constraintLayout.setOnClickListener(v -> {
+            lastBoughtUnit.setPoint(new com.destroyordefend.project.Core.Point(seekX, seekY));
+            System.out.println(lastBoughtUnit.getValues().getName());
+            Game.getGame().getAllUnits().add(lastBoughtUnit);
+            Log.i("TAG", "onClick: " + lastBoughtUnit.getPosition());
+            Toast.makeText(this, "unit is bought", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, ShopActivity.class));
         });
 
-
-        Xseek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        xSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                seekX = progress;
+                setTitle("X : " + seekX + " Y : " + seekY);
+                updateScreen(Game.getGame().getAllUnits());
 
-                seekx = progress;
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
 
-        Yseek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        ySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seeky = progress;
+                seekY = progress;
+                setTitle("X : " + seekX + " Y : " + seekY);
+                updateScreen(Game.getGame().getAllUnits());
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                updateScreen(Game.getGame().getAllUnits());
             }
         });
-
     }
 
     void updateScreen(TreeSet<Unit> allUnit) {
+        System.out.println("Size =  " + allUnit.size());
+        constraintLayout.removeAllViews();
         inRange = new ArrayList<>();
-        int left = seekx - maxX / 2;
-        int right = seekx + maxX / 2;
-        int up = seeky + maxY / 2;
-        int down = seeky - maxY / 2;
+        int left = seekX;
+        int right = seekX + maxX;
+        int up = seekY;
+        int down = seekY + maxY;
+        left /= square;
+        up /= square;
+        right /= square;
+        down /= square;
+        Log.d("Yaaa", "updateScreen: " + left + " " + right + " " + up + " " + " " + down);
         for (Unit unit : allUnit) {
-            if ((unit.getPosition().getX() > left && unit.getPosition().getX() < right)
-                    && (unit.getPosition().getY() > down && unit.getPosition().getY() < up)) {
+            System.out.println(unit.getPosition());
+            if ((unit.getPosition().getX() >= left && unit.getPosition().getX() <= right)
+                    && (unit.getPosition().getY() <= down && unit.getPosition().getY() >= up)) {
                 inRange.add(new MyImage(unit));
             }
         }
-
-
+        startUpdate();
     }
 
-    void startUpdate(ArrayList<MyImage> range) {
-
-        RelativeLayout.LayoutParams params;
-
-        for (MyImage myImage : range) {
-            params = new RelativeLayout.LayoutParams(myImage.getCenter().getX(), myImage.getCenter().getY());
-
-            rl.addView(myImage.getImageView(), params);
+    void startUpdate() {
+        ConstraintLayout.LayoutParams params;
+        for (MyImage myImage : inRange) {
+            System.out.println("SSSSSSSSSSS" + myImage.getImageView().getWidth() + "\n\n\n");
+            params = new ConstraintLayout.LayoutParams(myImage.getWidth(), myImage.getWidth());
+            constraintLayout.addView(myImage.getImageView(), params);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
 
     }
 
@@ -116,15 +141,17 @@ public class ArenaActivity extends GeneralActivity {
         com.destroyordefend.project.Core.Point center;
 
         public MyImage(Unit unit) {
-            this.imageView = new ImageView(getApplicationContext());
-            this.imageView.setImageResource(getSuitableImage(unit.getType()));
-            this.width = unit.getRadius() * 2;
+            this.imageView = new ImageView(ArenaActivity.this);
+            this.imageView.setImageResource(getSuitableImage(unit.getValues().getName()));
+            this.width = unit.getRadius() * 2 * square;
             this.center = unit.getPosition();
-            this.center.setX(center.getX() - (seekx - maxX / 2));
-            this.center.setY(center.getY() - (seeky + maxX / 2));
+            this.center.setX(center.getX() - (seekX / 11));
+            this.center.setY(center.getY() + ((seekY) / 11));
+            Log.d("", "MyImage: " + center);
         }
 
         public ImageView getImageView() {
+
             return imageView;
         }
 
@@ -166,10 +193,8 @@ public class ArenaActivity extends GeneralActivity {
                     break;
                 case "Pateriot Missile System":
                     break;
-
-
             }
-            return 0;
+            return R.mipmap.test_icon;
         }
     }
 }

@@ -11,22 +11,21 @@ public class HighestDamageAttack implements Tactic {
     @Override
     public void SortMap(Unit unit) {
 
+        Tactic.updateRange(unit);
+
         List<String> types = unit.getSortMap();
 
         DamageComparator damageComparator = new DamageComparator();
 
-        TreeSet<Unit> temp = new TreeSet<Unit>(damageComparator);
-
+        TreeSet<Unit> temp;
         temp = unit.getTreeSetUnit();
-
-        TreeSet<Unit> filtered = new TreeSet<Unit>(damageComparator);
+        TreeSet<Unit> filtered = new TreeSet<>(damageComparator);
         for (String type : types) {
             for (Unit u : temp) {
-                if (u.getType().equals(type))
+                if (u.is(type))
                     filtered.add(u);
             }
         }
-
         unit.setTreeSetUnit(filtered);
     }
 }

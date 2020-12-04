@@ -7,17 +7,25 @@ public interface Barrier {
 
     Point getPosition();
 
+    int getId();
+
     int getRadius();
 
-    String getType();
+    String getName();
 
     default boolean isSharedWith(Barrier b) {
-        return getLeft() >= b.getRight() || getRight() <= b.getLeft()
-                || getUp() <= b.getDown() || getDown() >= b.getUp();
+        if (getPosition() == null)
+            return false;
+        return !(
+                this.getUp() < b.getDown() ||
+                        this.getDown() > b.getUp() ||
+                        this.getRight() < b.getLeft() ||
+                        this.getLeft() > b.getRight()
+        );
     }
 
     default boolean is(String type) {
-        return getType().equals(type);
+        return getName().equals(type);
     }
 
     default int getLeft() {
@@ -35,4 +43,21 @@ public interface Barrier {
     default int getDown() {
         return getPosition().getY() - this.getRadius();
     }
+
+    default Point getDownRightCorner() {
+        return new Point(this.getRight(), this.getDown());
+    }
+
+    default Point getDownLeftCorner() {
+        return new Point(this.getLeft(), this.getDown());
+    }
+
+    default Point getUpRightCorner() {
+        return new Point(this.getRight(), this.getUp());
+    }
+
+    default Point getUpLeftCorner() {
+        return new Point(this.getLeft(), this.getUp());
+    }
+
 }

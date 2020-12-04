@@ -30,8 +30,7 @@ public class UpdateMapAsyncTask {
      */
 
     public static void invokeUpdatePosition() {
-        System.out.println("Move Thread name: " + Thread.currentThread().getName());
-        System.out.println("dddd" + updatePositionQueue.size());
+        System.out.println("Move Thread name: " + updatePositionQueue.size() + "  " + Thread.currentThread().getName());
         for (Runnable updatePosition : updatePositionQueue) {
             updatePosition.run();
         }

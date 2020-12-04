@@ -1,27 +1,26 @@
 package com.dolor.destroyordefense;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.destroyordefend.project.Core.Game;
-import com.destroyordefend.project.Core.Player;
 import com.destroyordefend.project.Core.Shop;
 import com.destroyordefend.project.Unit.Unit;
 
-import java.util.Iterator;
+import static com.dolor.destroyordefense.AndroidManger.currentPlayer;
+import static com.dolor.destroyordefense.AndroidManger.lastBoughtUnit;
+import static com.dolor.destroyordefense.AndroidManger.playerIterator;
 
 
 public class ShopActivity extends GeneralActivity {
     RecyclerView recyclerView;
     UnitAdapter unitAdapter;
-    public static Iterator<Player> playerIterator = Game.getGame().playerIterator();
-    public static MutableLiveData<Player> currentPlayer = new MutableLiveData<>();
+
     TextView playerName;
     Shop shop = Shop.getInstance();
     TextView playerPoints;
@@ -56,13 +55,12 @@ public class ShopActivity extends GeneralActivity {
                 .setMessage(unit.getValues().toString())
                 .setPositiveButton("Buy", (dialog, whichButton) -> {
                     try {
-                        currentPlayer.getValue().BuyAnArmy(unit);
+                        currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
+                        startActivity(new Intent(ShopActivity.this, ArenaActivity.class));
                         currentPlayer.setValue(playerIterator.next());
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                     dialog.dismiss();
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())

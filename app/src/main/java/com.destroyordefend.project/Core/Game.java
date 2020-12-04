@@ -1,23 +1,20 @@
 package com.destroyordefend.project.Core;
 
-import android.util.Log;
-
-import com.destroyordefend.project.Movement.FixedPosition;
-import com.destroyordefend.project.Movement.Movement;
-import com.destroyordefend.project.Movement.ToTarget;
-import com.destroyordefend.project.Tactic.LowestHealthAttack;
-import com.destroyordefend.project.Tactic.RandomAttack;
 import com.destroyordefend.project.Unit.Terrain;
 import com.destroyordefend.project.Unit.Unit;
 import com.destroyordefend.project.utility.GameTimer;
 import com.destroyordefend.project.utility.UpdateMapAsyncTask;
 import com.destroyordefend.project.utility.UpdateRangeAsyncTask;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.FileReader;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import static com.destroyordefend.project.Main.p;
-
 
 enum States {
     NotRunning,
@@ -29,21 +26,18 @@ enum States {
 
 public class Game {
     public static Game game;
-    static Unit unit;
-    TreeSet<Unit> allUnits;
-    TreeSet<Terrain> terrains;
-    States GameState = States.NotRunning;
-    Team attackers;
-    Team defenders;
+    private Unit base;
+    private TreeSet<Unit> allUnits = new TreeSet<>((v1, v2) -> 1);
+    private TreeSet<Terrain> terrains = new TreeSet<>(new PointComparator());
+    private States GameState = States.NotRunning;
+    private Team attackers, defenders;
     int attackerNumber, defenderNumber;
-    int initPoints = 10000;
     GameTimer gameTimer;
 
     private Game() {
-        terrains = new TreeSet<>(new Terrain.TerrainComparator());
-        allUnits = new TreeSet<>(new PointComparator());
-        attackers = new Team();
-        defenders = new Team();
+        base = new Unit(Shop.getInstance().getBaseValues());
+        base.setTreeSetUnit(new TreeSet<>(new PointComparator()));
+        allUnits.add(base);
     }
 
     public static Game getGame() {
@@ -54,34 +48,14 @@ public class Game {
 
     public void StartAnewGame() {
         //Todo:: terrain need to add terrains
-        gameTimer = new GameTimer(30);
+        gameTimer = new GameTimer(5);
         //Todo:Here We Should get the number of Players
-        attackers.addPlayer(new Player(initPoints, Player.TeamRole.Attacker, "attacker"));
-        defenders.addPlayer(new Player(initPoints, Player.TeamRole.Defender, "defender"));
-        unit.setTreeSetUnit(new TreeSet<>(new PointComparator()));
-        p(unit.getTreeSetUnit().toString());
-        attackers.getTeamPlayers().get(0).addArmy(new Unit(unit)
-                .AcceptTactic(new LowestHealthAttack()).AcceptMovement(new FixedPosition()));
-        defenders.getTeamPlayers().get(0).addArmy(new Unit(unit).AcceptTactic(new RandomAttack())
-                .AcceptMovement(new ToTarget(attackers.getTeamPlayers().get(0).getArmy().first())));
-
+        //  this.StartShoppingStage();
         UpdateUnits();
-        //this.StartShoppingStage();
-        this.StartPlacementStage();
-
         this.StartBattle();
-        //  UpdateUnits();
-        /**
-         * The Following Code We Will Use Later
-         *
-         * this.CreatePlayersStage();
-         * this.StartShoppingStage();
-         * **/
-
     }
 
     public void addPlayer(Player p) {
-        Log.i("TAG", "addPlayer: " + p.getRole());
         (p.getRole().equals(Player.TeamRole.Attacker) ?
                 attackers :
                 defenders)
@@ -93,12 +67,23 @@ public class Game {
     }
 
     public Unit getBase() {
-        //Todo: return base
-        return null;
+        return base;
     }
 
     public GameTimer getGameTimer() {
         return gameTimer;
+    }
+
+    private void StartBattle() {
+        gameTimer.start();
+        p("Start Battle");
+        p(String.valueOf(allUnits.size()));
+        for (Unit unit : allUnits) {
+            p(unit.toString());
+            UpdateMapAsyncTask.addMethod(unit::Move);
+            UpdateRangeAsyncTask.addMethod(unit::UpdateRange);
+            //Todo:Main method add to it Async Task
+        }
     }
 
     public boolean oneMore() {
@@ -115,29 +100,15 @@ public class Game {
         return defenders.getTeamPlayers().size() == defenderNumber;
     }
 
-    private void StartBattle() {
-        gameTimer.start();
-
-        p("StartBattel");
-        p(String.valueOf(allUnits.size()));
-        for (Unit unit : allUnits) {
-            unit.print();
-            UpdateMapAsyncTask.addMethod(unit::Move);
-            UpdateRangeAsyncTask.addMethod(unit::UpdateRange);
-            //Todo:Main method add to it Async Task
-
-        }
-    }
-
-
     public void UpdateUnits() {
         //this method to Update AllUnits
+        //Todo: should be PointComparator
         allUnits = new TreeSet<>(new PointComparator());
 
         for (Player player : attackers.getTeamPlayers()) {
             for (Unit unit : player.getArmy()) {
                 unit.setHealth(10);
-                unit.setRole(player.role.name());
+                unit.setRole(player.getRole());
                 allUnits.add(unit);
             }
         }
@@ -145,14 +116,47 @@ public class Game {
             allUnits.addAll(player.getArmy());
         }
         p(String.valueOf(allUnits.size()));
+        setNavigationForUnit();
+    }
+
+    public void setNavigationForUnit() {
+        /*Unit left, right, curr;
+        curr = allUnits.first();
+        left = null;
+        right = allUnits.iterator().next();
+        //Todo:need to check
+        for (int i = 1; i < allUnits.size(); i++) {
+            curr.setRightUnit(right);
+            right = allUnits.iterator().next();
+            left = curr;
+            curr = allUnits.iterator().next();
+            curr.setLeftUnit(left);
+        }*/
+        //TOdo :need to check
+        Unit left, right, cur;
+        Iterator<Unit> unitIterator = allUnits.iterator();
+        left = null;
+        cur = unitIterator.next();
+        right = unitIterator.next();
+        while (unitIterator.hasNext()) {
+            cur.setNeighbourUnit("left", left);
+            cur.setNeighbourUnit("right", right);
+            left = cur;
+            cur = right;
+            right = unitIterator.next();
+        }
+    }
+
+    public void setGameState(States gameState) {
+        GameState = gameState;
     }
 
     public States getGameState() {
         return GameState;
     }
 
-    public void setGameState(States gameState) {
-        GameState = gameState;
+    public TreeSet<Unit> getAllUnits() {
+        return this.allUnits;
     }
 
     public void setPlayersNumbers(int attackerNumber, int defenderNumber) {
@@ -164,106 +168,50 @@ public class Game {
         this.defenderNumber = defenderNumber;
     }
 
-    public TreeSet<Unit> getAllUnits() {
-        return this.allUnits;
-    }
-
-    protected void AddAnewPlayer() {
-        //Todo:  we should Get The Name of Player and the Role (Attacker / Defender) and set In the following constructor
-
+    public void CreateTeamsStage() {
+        try {
+            FileReader reader = new FileReader("Teams");
+            JSONParser jsonParser = new JSONParser();
+            JSONObject obj = (JSONObject) jsonParser.parse(reader);
+            JSONArray jsonArray = (JSONArray) obj.get("Players");
+            for (Object jsonObject : jsonArray) {
+                JSONObject player = (JSONObject) jsonObject;
+                Player p = new Player((int) player.get("Points")
+                        , Player.TeamRole.valueOf((String) player.get("role"))
+                        , (String) player.get("id"));
+                if (Player.TeamRole.Attacker.equals(p.getRole())) {
+                    attackers.addPlayer(p);
+                } else {
+                    defenders.addPlayer(p);
+                }
+                System.out.println(p.getId() + "  " + p.getRole());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     PlayerIterator temp = null;
 
-    protected void CreateTeamsStage() {
-
-        /**
-         * for the number of players we will call AddPlayer
-         * inside the loop the Statement will be
-         * AddAnewPlayer();
-         */
-
-
-    }
-
-    protected void StartPlacementStage() {
-        //Todo: x and y is Temporary Here
-        int x = 10, y = 10, r = 5;
-        for (Player p : defenders.getTeamPlayers()) {
-            for (Unit u : p.getArmy()) {
-                p("PS " + u.id);
-                Movement.canSetUnitPlace(new Point(x, y), u);
-                x += 100;
-                y += 100;
-            }
-        }
-        for (Player p : attackers.getTeamPlayers()) {
-            for (Unit u : p.getArmy()) {
-                Movement.canSetUnitPlace(new Point(x, y), u);
-                x += 10;
-                y += 10;
-            }
-        }
-
-    }
-
-    /*protected void StartShoppingStage() {
-
-        for (Player player : attackers.getTeamPlayers()) {
-            player.CreateArmy();
-            allUnits.addAll(player.getArmy());
-        }
-        for (Player player : defenders.getTeamPlayers()) {
-            player.CreateArmy();
-            allUnits.addAll(player.getArmy());
-        }
-
-    }
-*/
     public void UpdateState() {
         boolean stillInGame = false;
-
-        //Todo: should be a variable in Team count how many unit in all team players
-        for (Player player : attackers.getTeamPlayers()) {
-            if (player.getArmy().size() != 0) {
-                stillInGame = true;
-            }
-            if (!stillInGame) {
-                setGameState(States.DefenderWin);
-                return;
-            }
-        }
-        for (Unit unit : allUnits) {
-            if (unit.getType().equals("Base") && unit.getHealth() == 0) {
-                setGameState(States.AttackerWin);
-                return;
-            }
-        }
-        if (gameTimer.onEnd()) {
+        if (!attackers.isAlive()) {
+            setGameState(States.DefenderWin);
+        } else if (!base.isAlive()) {
+            setGameState(States.AttackerWin);
+        } else if (gameTimer.onEnd()) {
             setGameState(States.DefenderWin);
         }
     }
 
     public void DeleteUnit(Unit unit) {
-        p("Removed id " + unit.id);
-        p(unit.getRole());
-        if (unit.getRole().equals("Attacker")) {
-            for (Player player : attackers.getTeamPlayers()) {
-                if (player.getName().equals(unit.getPlayerId())) {
-                    player.getArmy().remove(unit);
-                }
-            }
-        } else {
-            for (Player player : defenders.getTeamPlayers()) {
-                if (player.getName().equals(unit.getPlayerId())) {
-                    player.getArmy().remove(unit);
-                }
-            }
-        }
-        this.allUnits.remove(unit);
-
+        p("Removed id " + unit.getId());
+        p(unit.getRole().name());
+        (unit.getRole().equals(Player.TeamRole.Attacker) ?
+                attackers :
+                defenders).removeUnit(unit);
+        allUnits.remove(unit);
     }
-
     public PlayerIterator playerIterator() {
         if (temp == null)
             return temp = new PlayerIterator();

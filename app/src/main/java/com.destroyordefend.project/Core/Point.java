@@ -1,7 +1,7 @@
 package com.destroyordefend.project.Core;
 
-public class Point {
-    int x, y;
+public class Point implements Comparable<Point> {
+    private int x, y;
 
     public Point() {
 
@@ -16,8 +16,22 @@ public class Point {
         this(p.x, p.y);
     }
 
-    public String asString() {
-        return String.valueOf('(' + String.valueOf(x) + ',' + String.valueOf(y) + ')');
+    @Override
+    public String toString() {
+        return "" + '(' + x + ',' + y + ')';
+    }
+
+    public void setPoint(Point n) {
+        this.x = n.getX();
+        this.y = n.getY();
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     public int getX() {
@@ -32,14 +46,6 @@ public class Point {
         return Math.sqrt(Math.pow(x - point.x, 2) + Math.pow(y - point.y, 2));
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,5 +55,12 @@ public class Point {
                 getY() == point.getY();
     }
 
+    @Override
+    public int compareTo(Point o) {
+        int out = Integer.compare(x, o.x);
+        if (out == 0)
+            out = Integer.compare(y, o.y);
+        return out;
+    }
 
 }

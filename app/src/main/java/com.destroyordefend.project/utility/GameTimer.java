@@ -6,10 +6,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.destroyordefend.project.Core.Game.game;
+import static com.destroyordefend.project.utility.MainMethodAsyncTask.doMainThingQueue;
+import static com.destroyordefend.project.utility.UpdateMapAsyncTask.updatePositionQueue;
+import static com.destroyordefend.project.utility.UpdateRangeAsyncTask.updateRangeQueue;
 
 public class GameTimer extends Thread {
     public static ExecutorService executorService = Executors.newFixedThreadPool(5);
-    int RoundLength = 30;
+    int RoundLength;
     int currentSecond = 0;
 
     public GameTimer(int roundLength) {
@@ -44,8 +47,6 @@ public class GameTimer extends Thread {
                   The PREVIOUS Code is a big Mistake
                   */
                 System.out.println("Here");
-
-
                 long current = System.currentTimeMillis();
 
                 executorService.submit(UpdateMapAsyncTask::invokeUpdatePosition);
@@ -68,6 +69,7 @@ public class GameTimer extends Thread {
 
         }
 
+
         executorService.shutdown();
 
     }
@@ -81,7 +83,11 @@ public class GameTimer extends Thread {
     }
 
     void reFill() {
+        updatePositionQueue.clear();
+        updateRangeQueue.clear();
+        doMainThingQueue.clear();
         for (Unit unit : game.getAllUnits()) {
+
             UpdateMapAsyncTask.addMethod(unit::Move);
             UpdateRangeAsyncTask.addMethod(() -> unit.getTactic().SortMap(unit));
             MainMethodAsyncTask.addMethod(() -> unit.getDamaging().DoDamage());

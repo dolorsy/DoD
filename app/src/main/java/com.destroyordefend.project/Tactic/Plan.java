@@ -1,7 +1,5 @@
 package com.destroyordefend.project.Tactic;
 
-
-import com.destroyordefend.project.Core.Point;
 import com.destroyordefend.project.Unit.Unit;
 
 import java.util.HashMap;

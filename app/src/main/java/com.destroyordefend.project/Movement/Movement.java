@@ -11,20 +11,23 @@ public interface Movement {
 
     static Barrier canSetUnitPlace(Point point, Unit unit) {
         Unit temp = new Unit(unit);
-        temp.setPoint(point);
-        for (Unit u : game.getAllUnits()) {
-            if (!(u.isSharedWith(temp)) && u.id != temp.id) {
-                return u;
+        temp.setPosition(point);
+        if (temp.isSharedWith(temp.getNeighbourUnit("left")))
+            return temp.getNeighbourUnit("left");
+        else if (temp.isSharedWith(temp.getNeighbourUnit("left")))
+            return temp.getNeighbourUnit("left");
+        else {
+            //Todo: need to change
+            for (Barrier u : game.getTerrains()) {
+                if (!(u.isSharedWith(temp)) && !u.getPosition().equals(temp.getPosition())) {
+                    return u;
+                }
             }
+            return null;
         }
-        for (Barrier u : game.getTerrains()) {
-            if (!(u.isSharedWith(temp)) && !u.getPosition().equals(temp.getPosition())) {
-                return u;
-            }
-        }
-        return null;
-        //Todo: if point on river return 2 else return 1
     }
+
+    Point GetNextPoint(Unit unit);
 
     static Point straightMove(Point src, Point dis) {
         int currentX = src.getX();
@@ -40,18 +43,7 @@ public interface Movement {
         return new Point(currentX, currentY);
     }
 
-    static Barrier getBarrierBetween(Unit src, Point dis) {
-        Point p = src.getPosition();
-
-        Barrier barrier = null;
-        while (!p.equals(dis)) {
-            p = straightMove(p, dis);
-            barrier = canSetUnitPlace(p, src);
-            if (barrier != null)
-                break;
-        }
-        return barrier;
+    default boolean SetNextPoint(Unit unit) {
+        return true;
     }
-
-    Point GetNextPoint(Unit unit);
 }

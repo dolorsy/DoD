@@ -1,0 +1,222 @@
+{
+  "shop": [
+    {
+      "type": "Tank",
+      "name": "TeslaTank",
+      "health": "1000",
+      "armor": "0.50",
+      "damage": "300",
+      "range": "250",
+      "shot_speed": "0.60",
+      "radius": "20",
+      "speed": "30",
+      "SortMap": [
+        "Tank",
+        "Solider"
+      ],
+      "price": "50"
+    },
+    {
+      "type": "Solider",
+      "name": "Sniper",
+      "health": "250",
+      "armor": "0.10",
+      "damage": "75",
+      "range": "700",
+      "shot_speed": "0.4",
+      "radius": "3",
+      "speed": "10",
+      "SortMap": [
+        "Solider"
+      ],
+      "price": "5"
+    },
+    {
+      "type": "Tank",
+      "name": "Mirage tank",
+      "health": "750",
+      "armor": "0.10",
+      "damage": "1000",
+      "range": "10",
+      "shot_speed": "1",
+      "radius": "15",
+      "speed": "60",
+      "SortMap": [
+        "Tank",
+        "Solider",
+        "Structure"
+      ],
+      "price": "70"
+    },
+    {
+      "type": "Solider",
+      "name": "Infantry",
+      "health": "250",
+      "armor": "0.20",
+      "damage": "50",
+      "range": "50",
+      "shot_speed": "1.5",
+      "radius": "3",
+      "speed": "10",
+      "SortMap": [
+        "Solider"
+      ],
+      "price": "3"
+    },
+    {
+      "type": "Solider",
+      "name": "Grizzly Tank",
+      "health": "1000",
+      "armor": "0.40",
+      "damage": "250",
+      "range": "250",
+      "shot_speed": "0.60",
+      "radius": "20",
+      "speed": "30",
+      "SortMap": [
+        "Tank",
+        "Solider",
+        "Structure"
+      ],
+      "price": "50"
+    },
+    {
+      "type": "Solider",
+      "name": "Navy SEAL",
+      "health": "400",
+      "armor": "0.20",
+      "damage": "60",
+      "range": "50",
+      "shot_speed": "2",
+      "radius": "3",
+      "speed": "20",
+      "SortMap": [
+        "Tanks",
+        "Solider"
+      ],
+      "price": "10"
+    },
+    {
+      "type": "Tank",
+      "name": "Tank destroyer",
+      "health": "1000",
+      "armor": "0.50",
+      "damage": "400",
+      "range": "150",
+      "shot_speed": "0.60",
+      "radius": "20",
+      "speed": "20",
+      "SortMap": [
+        "Tank"
+      ],
+      "price": "50"
+    },
+    {
+      "type": "Tank",
+      "name": "Prism tank",
+      "health": "1000",
+      "armor": "0.35",
+      "damage": "300",
+      "range": "150",
+      "shot_speed": "0.60",
+      "radius": "20",
+      "speed": "20",
+      "SortMap": [
+        "Tank",
+        "Solider",
+        "Structure"
+      ],
+      "price": "60"
+    },
+    {
+      "type": "Structure",
+      "name": "Pillbox",
+      "health": "4000",
+      "armor": "0.70",
+      "damage": "100",
+      "range": "200",
+      "shot_speed": "0.70",
+      "radius": "40",
+      "speed": "0",
+      "SortMap": [
+        "Solider"
+      ],
+      "price": "150"
+    },
+    {
+      "type": "Structure",
+      "name": "Prism Tower",
+      "health": "4000",
+      "armor": "0.70",
+      "damage": "100",
+      "range": "200",
+      "shot_speed": "0.50",
+      "radius": "30",
+      "speed": "0",
+      "SortMap": [
+        "Solider",
+        "Tank"
+      ],
+      "price": "150"
+    },
+    {
+      "type": "Structure",
+      "name": "Grand Cannon",
+      "health": "6500",
+      "armor": "0.30",
+      "damage": "150",
+      "range": "400",
+      "shot_speed": "0.90",
+      "radius": "40",
+      "speed": "0",
+      "SortMap": [
+        "Solider",
+        "Tank"
+      ],
+      "price": "200"
+    },
+    {
+      "type": "MAIN BASE",
+      "name": "MAIN BASE",
+      "health": "10000",
+      "armor": "0.00",
+      "damage": "0",
+      "range": "0",
+      "shot_speed": "0.00",
+      "radius": "50",
+      "speed": "0",
+      "SortMap": [],
+      "price": "0"
+    },
+    {
+      "type": "Airplane",
+      "name": "Black Eagle",
+      "health": "1500",
+      "armor": "0.00",
+      "damage": "400",
+      "range": "30",
+      "shot_speed": "0",
+      "radius": "0",
+      "speed": "100",
+      "SortMap": [
+        "MAIN BASE"
+      ],
+      "price": "75"
+    },
+    {
+      "type": "Structure",
+      "name": "Patriot Missile\r\nSystem",
+      "health": "2500",
+      "armor": "0.20",
+      "damage": "50",
+      "range": "400",
+      "shot_speed": "0.90",
+      "radius": "40",
+      "speed": "0",
+      "SortMap": [
+        "Airplane"
+      ],
+      "price": "175"
+    }
+  ]
+}

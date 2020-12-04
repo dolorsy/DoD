@@ -9,4 +9,6 @@ public class FixedPosition implements Movement {
     public Point GetNextPoint(Unit unit) {
         return unit.getPosition();
     }
+
+
 }

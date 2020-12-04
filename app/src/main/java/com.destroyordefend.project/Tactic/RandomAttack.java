@@ -15,20 +15,14 @@ public class RandomAttack implements Tactic {
 
         AriDefenceComparator ariDefenceComparator = new AriDefenceComparator();
 
-        TreeSet<Unit> temp = new TreeSet<>(ariDefenceComparator);
-
-        temp = unit.getTreeSetUnit();
-
+        TreeSet<Unit> temp = unit.getTreeSetUnit();
         TreeSet<Unit> filtered = new TreeSet<Unit>(ariDefenceComparator);
-
         for (String type : types) {
             for (Unit u : temp) {
-                if (u.getType().equals(type))
+                if (u.getName().equals(type))
                     filtered.add(u);
             }
         }
-
         unit.setTreeSetUnit(filtered);
-
     }
 }

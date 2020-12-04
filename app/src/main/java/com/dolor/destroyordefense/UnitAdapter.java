@@ -1,6 +1,7 @@
 package com.dolor.destroyordefense;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import com.destroyordefend.project.Unit.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
     List<Unit> unitList;
@@ -61,7 +64,8 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
             unitName.setText(unit.getValues().getName());
             unitPrice.setText("" + unit.getHealth());
             itemView.setOnClickListener(v -> {
-                ((ShopActivity) context).show(unit);
+                Log.d(TAG, "bind: " + unit);
+                ((ShopActivity) context).show(AndroidManger.lastBoughtUnit = unit);
             });
         }
     }

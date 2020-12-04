@@ -6,6 +6,7 @@ public class PriorityAttack implements Tactic {
 
     @Override
     public void SortMap(Unit unit) {
-
+        Tactic.updateRange(unit);
+        //todo:??
     }
 }

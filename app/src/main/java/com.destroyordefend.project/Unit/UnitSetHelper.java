@@ -1,27 +1,19 @@
 package com.destroyordefend.project.Unit;
 
-import java.util.HashMap;
-
 public interface UnitSetHelper {
-    HashMap<String, Unit> leftAndRight = new HashMap<>();
+     void setNeighbourUnit(String side, Unit unit);
 
-    public Unit getLeftUnit();
+     Unit getNeighbourUnit(String side);
 
-    public void setLeftUnit(Unit unit);
+     void updateLeftAndRight();
 
-    public Unit getRightUnit();
+     boolean needSwapWithLeft();
 
-    public void setRightUnit(Unit unit);
+     boolean needSwapWithRight();
 
-    public void updateLeftAndRight();
+     void swapWithLeft();
 
-    public boolean needSwapWithLeft();
-
-    public boolean needSwapWithRight();
-
-    public void swapWithLeft();
-
-    public void swapWithRight();
+     void swapWithRight();
 
 
 }

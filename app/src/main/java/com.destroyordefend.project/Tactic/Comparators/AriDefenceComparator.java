@@ -6,19 +6,10 @@ import java.util.Comparator;
 
 public class AriDefenceComparator implements Comparator<Unit> {
 
-
     @Override
     public int compare(Unit o1, Unit o2) {
-
-        int Range1 = o1.getRange();
-        int Range2 = o1.getRange();
-
-        if (Range1 > Range2 || Range1 < Range2)
-            return -1;
-
-        if (Range1 == Range2)
-            return 1;
-
-        return 0;
+        int o1Range = o1.getRange();
+        int o2Range = o1.getRange();
+        return o1Range == o2Range ? 1 : -1;
     }
 }

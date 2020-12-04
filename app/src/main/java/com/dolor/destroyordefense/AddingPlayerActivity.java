@@ -36,8 +36,8 @@ public class AddingPlayerActivity extends AppCompatActivity {
             getPlayerFromView();
             if (Game.getGame().fullDefender())
                 role.setText("Attacker");
-            AddingPlayerActivity.this.name.setText("");
-            AddingPlayerActivity.this.point.setText("");
+            AddingPlayerActivity.this.name.setText("at");
+            AddingPlayerActivity.this.point.setText("1000");
             Log.i("", "addListener: " + Game.getGame().oneMore());
             if (Game.getGame().oneMore()) {
                 toShopAddButton.setText("Shop");
