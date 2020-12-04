@@ -89,13 +89,13 @@ public class ShopActivity extends GeneralActivity {
         armor.setText("Price:                " + unit.getArmor());
 
         radius = v.findViewById(R.id.UnitRadius);
-        radius.setText("Radius:    " + unit.getRadius());
+        radius.setText("Radius:          " + unit.getRadius());
 
         sortedMap = v.findViewById(R.id.UnitSortedMap);
         sortedMap.setText("Targets:    " + unit.getSortMap());
 
         price = v.findViewById(R.id.UnitPrice);
-        price.setText("Price:                " + unit.getPrice());
+        price.setText("Price:              " + unit.getPrice());
 
         next = v.findViewById(R.id.buy);
         next.setOnClickListener((v2) -> {
