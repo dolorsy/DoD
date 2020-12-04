@@ -9,7 +9,7 @@ import java.util.TreeSet;
 public class RandomAttack implements Tactic {
 
     @Override
-    public void SortMap(Unit unit) {
+    public void SortMap( Unit unit) {
 
         List<String> types = unit.getSortMap();
 

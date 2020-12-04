@@ -2,6 +2,7 @@ package com.destroyordefend.project.utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class MainMethodAsyncTask {
 
@@ -13,21 +14,20 @@ public class MainMethodAsyncTask {
      * From any Class We Will Store Methods Like The Following
      * Runnable methodCall = () ->  MyMethodCall;
      * UpdateMapAsyncTask.addMethod(methodCall);
-     * <p>
+     *
      * Example
      * Runnable method = () -> invokeUpdatePosition();
-     * updatePositionQueue.add(method);
+     *         updatePositionQueue.add(method);
      */
 
     public static void invokeMainMethods() {
         System.out.println("Main Meth Thread name: " + Thread.currentThread().getName());
-        for (Runnable updatePosition : doMainThingQueue) {
+        for(Runnable updatePosition : doMainThingQueue) {
             updatePosition.run();
         }
-        clearQueue();
+    clearQueue();
     }
-
-    public static void clearQueue() {
+    public static void clearQueue(){
         doMainThingQueue.clear();
     }
 

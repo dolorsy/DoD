@@ -14,7 +14,7 @@ public class LowestHealthAttack implements Tactic {
         List<String> types = unit.getSortMap();
 
         HealthComparator healthComparator = new HealthComparator();
-        TreeSet<Unit> temp = unit.getTreeSetUnit();
+        TreeSet<Unit> temp  = unit.getTreeSetUnit();
         TreeSet<Unit> filtered = new TreeSet<Unit>(healthComparator);
         for (String type : types) {
             for (Unit u : temp) {

@@ -17,7 +17,7 @@ public class HighestDamageAttack implements Tactic {
 
         DamageComparator damageComparator = new DamageComparator();
 
-        TreeSet<Unit> temp;
+        TreeSet<Unit> temp ;
         temp = unit.getTreeSetUnit();
         TreeSet<Unit> filtered = new TreeSet<>(damageComparator);
         for (String type : types) {

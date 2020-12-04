@@ -18,10 +18,10 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
-    List<Unit> unitList;
+    List<Unit.UnitValues> unitList;
     Context context;
 
-    public UnitAdapter(List<Unit> unitList, Context context, int playerPoint) {
+    public UnitAdapter(List<Unit.UnitValues> unitList, Context context, int playerPoint) {
         this.unitList = new ArrayList<>(unitList);
         this.unitList.removeIf(unit -> unit.getPrice() > playerPoint);
         this.context = context;
@@ -36,7 +36,7 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UnitHolder holder, int position) {
-        Unit unit = unitList.get(position);
+        Unit.UnitValues unit = unitList.get(position);
         holder.bind(unit);
     }
 
@@ -45,7 +45,7 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
         return unitList.size();
     }
 
-    public void setUnitList(List<Unit> list, int playerPoints) {
+    public void setUnitList(List<Unit.UnitValues> list, int playerPoints) {
         this.unitList = new ArrayList<>(list);
         unitList.removeIf(unit -> unit.getPrice() > playerPoints);
     }
@@ -61,14 +61,14 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
             unitHealth = itemView.findViewById(R.id.unit_health);
         }
 
-        public void bind(Unit unit) {
+        public void bind(Unit.UnitValues unit) {
             unitName.setText(unit.getName());
             unitPrice.setText("" + unit.getPrice());
             unitHealth.setText("" + unit.getHealth());
             unitDamage.setText("" + unit.getDamage());
             itemView.setOnClickListener(v -> {
                 Log.d(TAG, "bind: " + unit);
-                ((ShopActivity) context).show(AndroidManger.lastBoughtUnit = unit);
+                ((ShopActivity) context).show(AndroidManger.lastBoughtUnit = new Unit(unit));
             });
         }
     }

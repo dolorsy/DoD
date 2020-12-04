@@ -10,10 +10,7 @@
       "shot_speed": "0.60",
       "radius": "20",
       "speed": "30",
-      "SortMap": [
-        "Tank",
-        "Solider"
-      ],
+      "SortMap": ["Tank","Solider"],
       "price": "50"
     },
     {
@@ -26,9 +23,7 @@
       "shot_speed": "0.4",
       "radius": "3",
       "speed": "10",
-      "SortMap": [
-        "Solider"
-      ],
+      "SortMap": ["Solider"],
       "price": "5"
     },
     {
@@ -41,11 +36,7 @@
       "shot_speed": "1",
       "radius": "15",
       "speed": "60",
-      "SortMap": [
-        "Tank",
-        "Solider",
-        "Structure"
-      ],
+      "SortMap": ["Tank","Solider","Structure"],
       "price": "70"
     },
     {
@@ -58,9 +49,7 @@
       "shot_speed": "1.5",
       "radius": "3",
       "speed": "10",
-      "SortMap": [
-        "Solider"
-      ],
+      "SortMap": ["Solider"],
       "price": "3"
     },
     {
@@ -73,11 +62,7 @@
       "shot_speed": "0.60",
       "radius": "20",
       "speed": "30",
-      "SortMap": [
-        "Tank",
-        "Solider",
-        "Structure"
-      ],
+      "SortMap": ["Tank","Solider","Structure"],
       "price": "50"
     },
     {
@@ -90,10 +75,7 @@
       "shot_speed": "2",
       "radius": "3",
       "speed": "20",
-      "SortMap": [
-        "Tanks",
-        "Solider"
-      ],
+      "SortMap": ["Tanks","Solider"],
       "price": "10"
     },
     {
@@ -106,9 +88,7 @@
       "shot_speed": "0.60",
       "radius": "20",
       "speed": "20",
-      "SortMap": [
-        "Tank"
-      ],
+      "SortMap": ["Tank"],
       "price": "50"
     },
     {
@@ -121,11 +101,7 @@
       "shot_speed": "0.60",
       "radius": "20",
       "speed": "20",
-      "SortMap": [
-        "Tank",
-        "Solider",
-        "Structure"
-      ],
+      "SortMap": ["Tank","Solider","Structure"],
       "price": "60"
     },
     {
@@ -138,9 +114,7 @@
       "shot_speed": "0.70",
       "radius": "40",
       "speed": "0",
-      "SortMap": [
-        "Solider"
-      ],
+      "SortMap": ["Solider"],
       "price": "150"
     },
     {
@@ -153,10 +127,7 @@
       "shot_speed": "0.50",
       "radius": "30",
       "speed": "0",
-      "SortMap": [
-        "Solider",
-        "Tank"
-      ],
+      "SortMap": ["Solider","Tank"],
       "price": "150"
     },
     {
@@ -169,10 +140,7 @@
       "shot_speed": "0.90",
       "radius": "40",
       "speed": "0",
-      "SortMap": [
-        "Solider",
-        "Tank"
-      ],
+      "SortMap": ["Solider","Tank"],
       "price": "200"
     },
     {
@@ -198,9 +166,7 @@
       "shot_speed": "0",
       "radius": "0",
       "speed": "100",
-      "SortMap": [
-        "MAIN BASE"
-      ],
+      "SortMap": ["MAIN BASE"],
       "price": "75"
     },
     {
@@ -213,10 +179,9 @@
       "shot_speed": "0.90",
       "radius": "40",
       "speed": "0",
-      "SortMap": [
-        "Airplane"
-      ],
+      "SortMap": ["Airplane"],
       "price": "175"
     }
+
   ]
 }

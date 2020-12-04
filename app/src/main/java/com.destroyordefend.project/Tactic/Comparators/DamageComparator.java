@@ -9,8 +9,8 @@ public class DamageComparator implements Comparator<Unit> {
     @Override
     public int compare(Unit o1, Unit o2) {
 
-        if (o1.getDamage() == o2.getDamage())
+        if (o1.getValues().getDamage() == o2.getValues().getDamage())
             return 1;
-        return o2.getDamage() - o1.getDamage();
+        return o2.getValues().getDamage() - o1.getValues().getDamage();
     }
 }

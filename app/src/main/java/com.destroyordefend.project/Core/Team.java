@@ -7,9 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
-    public final int id;
     private List<Player> teamPlayers;
-
+    public final int id ;
     public Team() {
         id = IdGenerator.generate(this);
         teamPlayers = new ArrayList<>();

@@ -14,13 +14,13 @@ public interface Barrier {
     String getName();
 
     default boolean isSharedWith(Barrier b) {
-        if (getPosition() == null)
+        if (getPosition() == null || b == null || b.getPosition() == null)
             return false;
         return !(
-                this.getUp() < b.getDown() ||
-                        this.getDown() > b.getUp() ||
-                        this.getRight() < b.getLeft() ||
-                        this.getLeft() > b.getRight()
+                this.getUp() <= b.getDown() ||
+                        this.getDown() >= b.getUp() ||
+                        this.getRight() <= b.getLeft() ||
+                        this.getLeft() >= b.getRight()
         );
     }
 

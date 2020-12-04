@@ -2,6 +2,7 @@ package com.destroyordefend.project.utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class UpdateRangeAsyncTask {
     static List<Runnable> updateRangeQueue = new ArrayList<>();
@@ -15,21 +16,21 @@ public class UpdateRangeAsyncTask {
      * From any Class We Will Store Methods Like The Following
      * Runnable methodCall = () ->  MyMethodCall;
      * UpdateMapAsyncTask.addMethod(methodCall);
-     * <p>
+     *
      * Example:
      * Runnable method = () -> invokeUpdatePosition();
-     * updatePositionQueue.add(method);
+     *         updatePositionQueue.add(method);
      */
 
-    public static void invokeUpdateRange() {
+    public static void invokeUpdateRange()
+    {
         System.out.println("Range Thread name: " + Thread.currentThread().getName());
-        for (Runnable updateRange : updateRangeQueue) {
+        for(Runnable updateRange : updateRangeQueue) {
             updateRange.run();
         }
         clearQueue();
     }
-
-    public static void clearQueue() {
+    public static void clearQueue(){
         updateRangeQueue.clear();
     }
 

@@ -8,22 +8,28 @@ import java.util.TreeSet;
 
 
 public class Player {
-    public final int id;
     private int Points;
+    private final int id;
     private TeamRole role;    //Is he attacker or Defender
     private String name;
     private TreeSet<Unit> army;
 
     public Player() {
         id = IdGenerator.generate(this);
+        army = new TreeSet<>((v1, v2) -> 1);
+
     }
 
     public Player(int points, TeamRole role, String name) {
         this();
-        army = new TreeSet<>(new PointComparator());//todo:need to check if it is work for point comparator
         Points = points;
         this.role = role;
         this.name = name;
+    }
+
+    public void addArmy(Unit unit) {
+        army.add(unit);
+
     }
 
     public TeamRole getRole() {
@@ -38,10 +44,6 @@ public class Player {
         return army;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public int getPoints() {
         return Points;
     }
@@ -54,7 +56,7 @@ public class Player {
     }
 
     public void BuyAnArmy(Unit unit) throws NoEnoughPointsException {
-        cutPrice(unit.getPrice());
+        cutPrice(unit.getValues().getPrice());
         unit.setRole(this.role);
         army.add(unit);
     }
@@ -63,6 +65,10 @@ public class Player {
         for (Unit unit : army) {
             army.removeIf(unit1 -> !unit.isAlive());
         }
+    }
+
+    public int getId() {
+        return id;
     }
 
     public enum TeamRole {

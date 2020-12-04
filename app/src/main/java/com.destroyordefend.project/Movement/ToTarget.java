@@ -7,9 +7,9 @@ import com.destroyordefend.project.Unit.Unit;
 import java.util.Stack;
 
 public class ToTarget implements Movement {
-    private final Stack<Point> track = new Stack<>();
     private Point target;
     private Barrier goal;
+    private final Stack<Point> track = new Stack<>();
 
     public ToTarget(Unit target) {
         track.push(target.getPosition());
@@ -17,33 +17,45 @@ public class ToTarget implements Movement {
 
     @Override
     public Point GetNextPoint(Unit unit) {
-        return null;
+        System.out.println(track.size());
+        if(unit.getPosition().equals(track.peek())){
+            track.pop();
+        }
+        if(track.empty())
+            return unit.getPosition();
+        Point p =Movement.straightMove(unit.getPosition(),track.peek());
+        return p;
+    }
+
+    @Override
+    public Stack<Point> getTruck() {
+        return track;
     }
 
 
     @Override
     public boolean SetNextPoint(Unit unit) {
 
-        Point n = Movement.straightMove(unit.getPosition(), track.peek());
-        Barrier barrier = Movement.canSetUnitPlace(n, unit);
-        if (barrier != null) {
-            if (barrier.getName().equals("river")) {
+       Point n = Movement.straightMove(unit.getPosition(),track.peek());
+        Barrier barrier = Movement.canSetUnitPlace(n,unit);
+        if(barrier != null){
+            if(barrier.getName().equals("river")) {
                 unit.setPosition(n);
                 return true;
             }
-            Point[] corners = {barrier.getDownLeftCorner(), barrier.getDownRightCorner(), barrier.getUpRightCorner(), barrier.getUpLeftCorner()};
+            Point[] corners = {barrier.getDownLeftCorner(),barrier.getDownRightCorner(),barrier.getUpRightCorner(),barrier.getUpLeftCorner()};
             int min = 0;
-            int nextp = 1;
+            int nextp = 1 ;
             double curDist = unit.getPosition().distance(corners[0]);
             for (int i = 0; i < 4; i++) {
                 double curAns = (unit.getPosition().distance(corners[i]));
-                if (curAns < curDist) {
+                if (curAns < curDist ) {
                     min = i;
-                    if (corners[i].getX() > unit.getRight())
+                    if(corners[i].getX() > unit.getRight())
                         nextp = 3;
-                    else if (corners[i].getX() < unit.getLeft())
+                    else if(corners[i].getX() < unit.getLeft())
                         nextp = 4;
-                    else if (corners[i].getY() < unit.getDown())
+                    else if(corners[i].getY() < unit.getDown())
                         nextp = 2;
                     else
                         nextp = 1;
@@ -52,27 +64,27 @@ public class ToTarget implements Movement {
                 }
             }
             switch (min) {
-                case 1: {
+                case 1 : {
                     corners[min].setX(corners[min].getX() - unit.getRadius());
                     corners[min].setY(corners[min].getY() - unit.getRadius());
                     break;
                 }
-                case 2: {
+                case 2 : {
                     corners[min].setX(corners[min].getX() + unit.getRadius());
                     corners[min].setY(corners[min].getY() - unit.getRadius());
                     break;
                 }
-                case 3: {
+                case 3 : {
                     corners[min].setX(corners[min].getX() + unit.getRadius());
                     corners[min].setY(corners[min].getY() + unit.getRadius());
                     break;
                 }
-                case 4: {
+                case 4 : {
                     corners[min].setX(corners[min].getX() - unit.getRadius());
                     corners[min].setY(corners[min].getY() + unit.getRadius());
                     break;
                 }
-                default:
+                default :
                     throw new IllegalStateException("Unexpected value: " + min);
             }
 
@@ -82,22 +94,22 @@ public class ToTarget implements Movement {
                     corners[nextp].setY(corners[nextp].getY() - unit.getRadius());
                     break;
                 }
-                case 2: {
+                case 2 : {
                     corners[nextp].setX(corners[nextp].getX() + unit.getRadius());
                     corners[nextp].setY(corners[nextp].getY() - unit.getRadius());
                     break;
                 }
-                case 3: {
+                case 3 : {
                     corners[nextp].setX(corners[nextp].getX() + unit.getRadius());
                     corners[nextp].setY(corners[nextp].getY() + unit.getRadius());
                     break;
                 }
-                case 4: {
+                case 4 : {
                     corners[nextp].setX(corners[nextp].getX() - unit.getRadius());
                     corners[nextp].setY(corners[nextp].getY() + unit.getRadius());
                     break;
                 }
-                default:
+                default :
                     throw new IllegalStateException("Unexpected value: " + min);
             }
 

@@ -9,8 +9,8 @@ public class HealthComparator implements Comparator<Unit> {
     @Override
     public int compare(Unit o1, Unit o2) {
 
-        if (o1.getHealth() == o2.getHealth())
+        if (o1.getValues().getHealth() == o2.getValues().getHealth())
             return 1;
-        return o1.getHealth() - o2.getHealth();
+        return o1.getValues().getHealth() - o2.getValues().getHealth();
     }
 }

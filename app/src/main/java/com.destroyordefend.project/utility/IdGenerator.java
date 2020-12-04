@@ -11,10 +11,10 @@ public class IdGenerator {
 
     public static Integer generate(Object o) {
         Integer out = ids.get(o.getClass());
-        if (out == null)
-            out = 1;
-        else
-            ids.put(o.getClass(), ++out);
+        if (out == null) {
+            out = 0;
+        }
+        ids.put(o.getClass(), ++out);
         return out;
     }
 }

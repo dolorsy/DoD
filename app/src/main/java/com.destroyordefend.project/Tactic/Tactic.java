@@ -2,20 +2,25 @@ package com.destroyordefend.project.Tactic;
 
 import com.destroyordefend.project.Core.PointComparator;
 import com.destroyordefend.project.Unit.Unit;
+import com.destroyordefend.project.Core.Point;
 
+import java.util.Map;
 import java.util.TreeSet;
 
+import static com.destroyordefend.project.Core.Game.game;
+import static com.destroyordefend.project.Main.p;
+
 public interface Tactic {
-    static void updateRange(Unit t) {
+    static void updateRange(Unit t){
 
         TreeSet<Unit> temp = new TreeSet<>(new PointComparator());
         Unit tempUnit = t.getNeighbourUnit("left");
-        while (isInRange(t, tempUnit)) {
+        while(isInRange(t,tempUnit)){
             temp.add(tempUnit);
             tempUnit = tempUnit.getNeighbourUnit("left");
         }
         tempUnit = t.getNeighbourUnit("right");
-        while (isInRange(t, tempUnit)) {
+        while(isInRange(t,tempUnit)){
             temp.add(tempUnit);
             tempUnit = tempUnit.getNeighbourUnit("right");
         }
@@ -35,13 +40,11 @@ public interface Tactic {
         t.setTreeSetUnit(unitTreeSet);
         */
     }
-
-    static boolean isInRange(Unit radar, Unit target) {
-        return !(target.getLeft() > radar.getRight() + radar.getRange() ||
-                target.getRight() < radar.getLeft() - radar.getRange() || radar.getPosition().equals(target.getPosition())) ||
-                !(target.getDown() > radar.getUp() + radar.getRange() ||
-                        target.getUp() < radar.getDown() - radar.getRange());
+    static boolean isInRange(Unit radar,Unit target){
+        return !(target.getLeft() > radar.getRight() + radar.getValues().getRange() ||
+                target.getRight() < radar.getLeft() - radar.getValues().getRange() || radar.getPosition().equals(target.getPosition())) ||
+                !(target.getDown() > radar.getUp() + radar.getValues().getRange() ||
+                        target.getUp() < radar.getDown() - radar.getValues().getRange());
     }
-
-    void SortMap(Unit unit);
+    void  SortMap (Unit unit);
 }
