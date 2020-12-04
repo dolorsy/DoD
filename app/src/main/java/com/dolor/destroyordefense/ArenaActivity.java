@@ -34,10 +34,10 @@ public class ArenaActivity extends GeneralActivity {
         setContentView(R.layout.activity_arena);
         setTitle("X : " + seekX + " Y : " + seekY);
 
-        xSeekBar = (SeekBar) findViewById(R.id.XseekBar);
-        ySeekBar = (SeekBar) findViewById(R.id.YseekBar);
+        xSeekBar = findViewById(R.id.XseekBar);
+        ySeekBar = findViewById(R.id.YseekBar);
 
-        constraintLayout = (ConstraintLayout) findViewById(R.id.my_relative_layout);
+        constraintLayout =  findViewById(R.id.my_relative_layout);
         Display mdisp = getWindowManager().getDefaultDisplay();
         Point mdispSize = new Point();
         mdisp.getSize(mdispSize);
@@ -50,13 +50,13 @@ public class ArenaActivity extends GeneralActivity {
         System.out.println(maxX);
         System.out.println(maxY);
         System.out.println(square);
-        Log.d("TAG", "onCreate: " + Game.getGame().getAllUnits().size());
-        //  updateScreen(Game.getGame().getAllUnits());
+        Log.d("TAG", "onCreate: allUnit.size()" + Game.getGame().getAllUnits().size());
+          updateScreen(Game.getGame().getAllUnits());
         constraintLayout.setOnClickListener(v -> {
             lastBoughtUnit.setPosition(new com.destroyordefend.project.Core.Point(seekX, seekY));
-            // System.out.println(lastBoughtUnit.getValues().getName());
+             System.out.println(lastBoughtUnit.getValues().getName());
             Game.getGame().getAllUnits().add(lastBoughtUnit);
-            Log.i("TAG", "onClick: " + lastBoughtUnit.getPosition());
+            Log.i("TAG", "onClick: lastBoughtUnit.pos " + lastBoughtUnit.getPosition());
             Toast.makeText(this, "unit is bought", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, ShopActivity.class));
         });
@@ -99,7 +99,7 @@ public class ArenaActivity extends GeneralActivity {
     }
 
     void updateScreen(TreeSet<Unit> allUnit) {
-        System.out.println("Size =  " + allUnit.size());
+        Log.i("", "updateScreen: allUnit.size()" + allUnit.size());
         constraintLayout.removeAllViews();
         inRange = new ArrayList<>();
         int left = seekX;
@@ -124,7 +124,7 @@ public class ArenaActivity extends GeneralActivity {
     void startUpdate() {
         ConstraintLayout.LayoutParams params;
         for (MyImage myImage : inRange) {
-            System.out.println("SSSSSSSSSSS" + myImage.getImageView().getWidth() + "\n\n\n");
+            System.out.println("startUpdate: img width" + myImage.getImageView().getWidth());
             params = new ConstraintLayout.LayoutParams(myImage.getWidth(), myImage.getWidth());
             constraintLayout.addView(myImage.getImageView(), params);
         }
@@ -144,10 +144,14 @@ public class ArenaActivity extends GeneralActivity {
             this.imageView = new ImageView(ArenaActivity.this);
             this.imageView.setImageResource(getSuitableImage(unit.getName()));
             this.width = unit.getRadius() * 2 * square;
-            this.center = unit.getPosition();
-            this.center.setX(center.getX() - (seekX / 11));
-            this.center.setY(center.getY() + ((seekY) / 11));
-            Log.d("", "MyImage: " + center);
+            imageView.setLayoutParams(new ConstraintLayout.LayoutParams(width,width));
+           // imageView.getLayoutParams().height = width*square;
+            this.center = new com.destroyordefend.project.Core.Point(unit.getPosition());
+           /* this.center.setX(center.getX() - (seekX / 11));
+            this.center.setY(center.getY() + (seekY / 11));*/
+            center.setX(seekX - center.getX()*square);
+            center.setY(seekY - center.getY()*square);
+            Log.d("", "MyImage: center = " + center);
         }
 
         public ImageView getImageView() {

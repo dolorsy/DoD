@@ -71,13 +71,13 @@ public class ShopActivity extends GeneralActivity {
         name.setText("Name:             " + unit.getName());
 
         range = v.findViewById(R.id.UnitRange);
-        range.setText("Range:            " + unit.getRange());
+        range.setText("Range:             " + unit.getRange());
 
         speed = v.findViewById(R.id.UnitSpeed);
-        speed.setText("Speed:            " + unit.getSpeed());
+        speed.setText("Speed:             " + unit.getSpeed());
 
         shotSpeed = v.findViewById(R.id.UnitShotSpeed);
-        shotSpeed.setText("ShotSpeed:    " + unit.getShot_speed());
+        shotSpeed.setText("ShotSpeed:     " + unit.getShot_speed());
 
         health = v.findViewById(R.id.UnitHealth);
         health.setText("Health:            " + unit.getHealth());
@@ -86,16 +86,16 @@ public class ShopActivity extends GeneralActivity {
         damage.setText("Damage:         " + unit.getDamage());
 
         armor = v.findViewById(R.id.UnitArmor);
-        armor.setText("Price:                " + unit.getArmor());
+        armor.setText("Armor:             " + unit.getArmor());
 
         radius = v.findViewById(R.id.UnitRadius);
-        radius.setText("Radius:          " + unit.getRadius());
+        radius.setText("Radius:             " + unit.getRadius());
 
         sortedMap = v.findViewById(R.id.UnitSortedMap);
         sortedMap.setText("Targets:    " + unit.getSortMap());
 
         price = v.findViewById(R.id.UnitPrice);
-        price.setText("Price:              " + unit.getPrice());
+        price.setText("Price:                    " + unit.getPrice());
 
         next = v.findViewById(R.id.buy);
         next.setOnClickListener((v2) -> {
