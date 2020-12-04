@@ -68,7 +68,8 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.UnitHolder> {
             unitDamage.setText("Damage:" + unit.getDamage());
             itemView.setOnClickListener(v -> {
                 Log.d(TAG, "bind: " + unit);
-                ((ShopActivity) context).show(AndroidManger.lastBoughtUnit = new Unit(unit));
+                AndroidManger.lastBoughtUnit = new Unit(unit);
+                ((ShopActivity) context).show(unit);
             });
         }
     }

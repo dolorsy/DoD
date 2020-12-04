@@ -11,8 +11,8 @@ import com.destroyordefend.project.Core.Shop;
 import static com.dolor.destroyordefense.AndroidManger.currentPlayer;
 import static com.dolor.destroyordefense.AndroidManger.lastBoughtUnit;
 import static com.dolor.destroyordefense.AndroidManger.playerIterator;
-/*
 
+/*
 public class UnitDetailsActivity extends GeneralActivity {
     TextView name, range, speed, shotSpeed, health, damage, price;
     Button buy;
@@ -69,5 +69,4 @@ public class UnitDetailsActivity extends GeneralActivity {
     public void onBackPressed() {
     }
 }
-
 */

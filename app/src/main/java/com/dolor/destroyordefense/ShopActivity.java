@@ -2,6 +2,8 @@ package com.dolor.destroyordefense;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -49,11 +51,9 @@ public class ShopActivity extends GeneralActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }
 
-    public void show(Unit unit) {
-        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Dialog))
-                .setTitle(unit.getName())
-                .setMessage(unit.getValues().toString())
-                .setPositiveButton("Buy", (dialog, whichButton) -> {
+    public void show(Unit.UnitValues unit) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Dialog))
+               /* .setPositiveButton("Buy", (dialog, whichButton) -> {
                     try {
                         currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
                         startActivity(new Intent(ShopActivity.this, ArenaActivity.class));
@@ -62,8 +62,44 @@ public class ShopActivity extends GeneralActivity {
                         e.printStackTrace();
                     }
                     dialog.dismiss();
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                })*/;
+                View v = getLayoutInflater().inflate(R.layout.activity_unit_details,null);
+        TextView name, range, speed, shotSpeed, health, damage, price;
+        Button next;
+
+        name = v.findViewById(R.id.UnitName);
+        name.setText("Name:             " + unit.getName());
+
+        range = v.findViewById(R.id.UnitRange);
+        range.setText("Range:            " + unit.getRange());
+
+        speed = v.findViewById(R.id.UnitSpeed);
+        speed.setText("Speed:            " + unit.getSpeed());
+
+        shotSpeed = v.findViewById(R.id.UnitShotSpeed);
+        shotSpeed.setText("ShotSpeed:    " + unit.getShot_speed());
+
+        health = v.findViewById(R.id.UnitHealth);
+        health.setText("Health:            " + unit.getHealth());
+
+        damage = v.findViewById(R.id.UnitDamage);
+        damage.setText("Damage:         " + unit.getDamage());
+
+        price = v.findViewById(R.id.UnitPrice);
+        price.setText("Price:                 " + unit.getPrice());
+
+        next = v.findViewById(R.id.buy);
+        next.setOnClickListener((v2)->{
+            try {
+                currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
+                startActivity(new Intent(ShopActivity.this, ArenaActivity.class));
+                currentPlayer.setValue(playerIterator.next());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+                alertDialog/*.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())*/
+                        .setView(v)
                 .create().show();
     }
 }
