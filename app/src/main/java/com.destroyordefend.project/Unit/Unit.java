@@ -6,6 +6,7 @@ import com.destroyordefend.project.Core.PointComparator;
 import com.destroyordefend.project.Movement.Movement;
 import com.destroyordefend.project.Tactic.Tactic;
 import com.destroyordefend.project.utility.IdGenerator;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -410,17 +411,17 @@ public class Unit implements TacticAble, MovementAble, Barrier, UnitSetHelper {
         @Override
         public String toString() {
             return "UnitValues{" +
-                    "name='" + name + '\'' +
-                    ", health=" + health +
-                    ", armor=" + armor +
-                    ", damage=" + damage +
-                    ", range=" + range +
-                    ", shot_speed=" + shot_speed +
+                    "name='" + name + '\'' + //
+                    ", health=" + health +   //
+                    ", armor=" + armor +     //
+                    ", damage=" + damage +   //
+                    ", range=" + range +     //
+                    ", shot_speed=" + shot_speed + //
                     ", radius=" + radius +
-                    ", speed=" + speed +
+                    ", speed=" + speed +      //
                     ", sortMap=" + sortMap +
-                    ", price=" + price +
-                    ", currentSpeed=" + currentSpeed +
+                    ", price=" + price +      //
+                    ", currentSpeed=" + currentSpeed +//
                     '}';
         }
     }

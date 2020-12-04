@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ColorQuickActionBackground"
-    android:paddingLeft="8dp"
-    tools:context=".UnitDetailsActivity">
+    android:paddingLeft="8dp">
 
     <TextView
         android:id="@+id/UnitDetails"
@@ -96,12 +94,52 @@
         android:text="UnitHealth:"
         android:textColor="@color/ColorWhite"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/UnitShotSpeed"
         app:layout_constraintVertical_bias="0.024" />
+
+    <TextView
+        android:id="@+id/UnitArmor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="16dp"
+        android:text="UnitArmor:"
+        android:textColor="@color/ColorWhite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/UnitDamage" />
+
+    <TextView
+        android:id="@+id/UnitCurrentSpeed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="16dp"
+        android:text="UnitCurrentSpeed:"
+        android:textColor="@color/ColorWhite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/UnitArmor" />
+
+    <TextView
+        android:id="@+id/UnitSortedMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="16dp"
+        android:text="UnitSortedMap:"
+        android:textColor="@color/ColorWhite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/UnitCurrentSpeed" />
 
     <TextView
         android:id="@+id/UnitDamage"
@@ -122,16 +160,14 @@
         android:id="@+id/UnitPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:paddingLeft="16dp"
         android:text="UnitPrice:"
         android:textColor="@color/ColorWhite"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/UnitDamage"
-        app:layout_constraintVertical_bias="0.026" />
+        app:layout_constraintTop_toBottomOf="@+id/UnitSortedMap" />
 
     <Button
         android:id="@+id/buy"

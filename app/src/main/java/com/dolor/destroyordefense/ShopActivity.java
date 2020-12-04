@@ -63,8 +63,8 @@ public class ShopActivity extends GeneralActivity {
                     }
                     dialog.dismiss();
                 })*/;
-                View v = getLayoutInflater().inflate(R.layout.activity_unit_details,null);
-        TextView name, range, speed, shotSpeed, health, damage, price;
+        View v = getLayoutInflater().inflate(R.layout.activity_unit_details, null);
+        TextView name, range, speed, shotSpeed, health, damage, armor, currentSpeed, sortedMap, price;
         Button next;
 
         name = v.findViewById(R.id.UnitName);
@@ -85,11 +85,20 @@ public class ShopActivity extends GeneralActivity {
         damage = v.findViewById(R.id.UnitDamage);
         damage.setText("Damage:         " + unit.getDamage());
 
+        armor = v.findViewById(R.id.UnitArmor);
+        armor.setText("Price:                " + unit.getArmor());
+
+        currentSpeed = v.findViewById(R.id.UnitCurrentSpeed);
+        currentSpeed.setText("currentSpeed:    " + unit.getCurrentSpeed());
+
+        sortedMap = v.findViewById(R.id.UnitSortedMap);
+        sortedMap.setText("Targets:    " + unit.getSortMap());
+
         price = v.findViewById(R.id.UnitPrice);
-        price.setText("Price:                 " + unit.getPrice());
+        price.setText("Price:                " + unit.getPrice());
 
         next = v.findViewById(R.id.buy);
-        next.setOnClickListener((v2)->{
+        next.setOnClickListener((v2) -> {
             try {
                 currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
                 startActivity(new Intent(ShopActivity.this, ArenaActivity.class));
@@ -98,8 +107,8 @@ public class ShopActivity extends GeneralActivity {
                 e.printStackTrace();
             }
         });
-                alertDialog/*.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())*/
-                        .setView(v)
+        alertDialog/*.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())*/
+                .setView(v)
                 .create().show();
     }
 }
