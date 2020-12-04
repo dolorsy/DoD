@@ -19,7 +19,6 @@ public class Shop {
 
     private Shop() {
         this.shopUnits = new ArrayList<>();
-        shopUnits.add(null);
         this.InitShop();
     }
 
@@ -64,7 +63,7 @@ public class Shop {
             for (Object a : shop) {
                 JSONObject unit1 = (JSONObject) a;
                 Unit.UnitValues unitValues = new Unit.UnitValues(unit1);
-                if (unitValues.is("main base"))
+                if (unitValues.is("MAIN BASE"))
                     baseUnitValues = unitValues;
                 else {
                     this.shopUnits.add(unitValues);
