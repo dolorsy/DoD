@@ -41,6 +41,7 @@ public class Game {
         defenders = new Team();
 
         base = new Unit(Shop.getInstance().getBaseValues());
+        base.setPosition(new Point(4,4));
         base.setTreeSetUnit(new TreeSet<>(new PointComparator()));
         allUnits.add(base);
     }
