@@ -1,5 +1,6 @@
 package com.dolor.destroyordefense;
 
+
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -7,10 +8,9 @@ import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.destroyordefend.project.Core.Game;
 import com.destroyordefend.project.Unit.Unit;
@@ -23,9 +23,9 @@ import static com.dolor.destroyordefense.AndroidManger.lastBoughtUnit;
 
 public class ArenaActivity extends GeneralActivity {
     TypeConverter maxX, maxY;
-    TypeConverter seekX = new TypeConverter(TypeConverter.Type.point),
-            seekY = new TypeConverter(TypeConverter.Type.point);
-    ConstraintLayout constraintLayout;
+    TypeConverter seekX = new TypeConverter(Type.point),
+            seekY = new TypeConverter(Type.point);
+    RelativeLayout relativeLayout;
     SeekBar xSeekBar, ySeekBar;
     List<MyImage> inRange = new ArrayList<>();
 
@@ -38,26 +38,27 @@ public class ArenaActivity extends GeneralActivity {
         xSeekBar = findViewById(R.id.XseekBar);
         ySeekBar = findViewById(R.id.YseekBar);
 
-        constraintLayout = findViewById(R.id.my_relative_layout);
+        relativeLayout = findViewById(R.id.my_relative_layout);
         Display mdisp = getWindowManager().getDefaultDisplay();
         Point mdispSize = new Point();
         mdisp.getSize(mdispSize);
-        TypeConverter.square = 10;
+        TypeConverter.square = 1000;
 
-        maxX = new TypeConverter(mdispSize.x, TypeConverter.Type.pixel);
-        maxY = new TypeConverter(mdispSize.y, TypeConverter.Type.pixel);
+        maxX = new TypeConverter(mdispSize.x, Type.pixel);
+        maxY = new TypeConverter(mdispSize.y, Type.pixel);
         Log.i("", "onCreate: maxX/Y" + maxX + " " + maxY);
-        constraintLayout.setX(0);
-        constraintLayout.setY(0);
+        relativeLayout.setX(0);
+        relativeLayout.setY(0);
         Log.d("TAG", "onCreate: allUnit.size()" + Game.getGame().getAllUnits().size());
         updateScreen(Game.getGame().getAllUnits());
-        constraintLayout.setOnClickListener(v -> {
-            lastBoughtUnit.setPosition(new com.destroyordefend.project.Core.Point((int)seekX.toPoint(),(int) seekY.toPoint()));
+        relativeLayout.setOnLongClickListener(v -> {
+            lastBoughtUnit.setPosition(new com.destroyordefend.project.Core.Point((int) seekX.toPoint(), (int) seekY.toPoint()));
             System.out.println(lastBoughtUnit.getValues().getName());
             Game.getGame().getAllUnits().add(lastBoughtUnit);
             Log.i("TAG", "onClick: lastBoughtUnit.pos " + lastBoughtUnit.getPosition());
             Toast.makeText(this, "unit is bought", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, ShopActivity.class));
+            return true;
         });
 
         xSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -97,9 +98,9 @@ public class ArenaActivity extends GeneralActivity {
         });
     }
 
-    void updateScreen(TreeSet<Unit> allUnit) {
+    /*void updateScreen(TreeSet<Unit> allUnit) {
         Log.i("", "updateScreen: allUnit.size()" + allUnit.size());
-        constraintLayout.removeAllViews();
+        relativeLayout.removeAllViews();
         inRange = new ArrayList<>();
         TypeConverter left = left();
         TypeConverter right = right();
@@ -115,13 +116,23 @@ public class ArenaActivity extends GeneralActivity {
         }
         startUpdate();
     }
+*/
+    void updateScreen(TreeSet<Unit> allUnits) {
+        relativeLayout.removeAllViews();
+        relativeLayout.requestLayout();
+        for (Unit unit : allUnits) {
+            inRange.add(new MyImage(unit));
+        }
+        startUpdate();
+    }
 
     void startUpdate() {
-        ConstraintLayout.LayoutParams params;
         for (MyImage myImage : inRange) {
-            System.out.println("startUpdate: img width" + myImage.getImageView().getLayoutParams().width);
-            params = new ConstraintLayout.LayoutParams(myImage.getImageView().getLayoutParams().width, myImage.getImageView().getLayoutParams().width);
-            constraintLayout.addView(myImage.getImageView(), params);
+            ImageView iv = myImage.imageView;
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(myImage.width.toPixel(), myImage.width.toPixel());
+            params.leftMargin = myImage.center.getX();
+            params.topMargin = myImage.center.getY();
+            relativeLayout.addView(iv, params);
         }
     }
 
@@ -142,8 +153,8 @@ public class ArenaActivity extends GeneralActivity {
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (action == KeyEvent.ACTION_DOWN) {
-                    TypeConverter.square-=10;
+                if (action == KeyEvent.ACTION_DOWN && TypeConverter.square > 10) {
+                    TypeConverter.square -= 10;
                     updateScreen(Game.getGame().getAllUnits());
 
                 }
@@ -153,27 +164,116 @@ public class ArenaActivity extends GeneralActivity {
         }
     }
 
+    TypeConverter down() {
+        return seekY.plus(maxY);
+    }
+
+    TypeConverter left() {
+        return seekX;
+    }
+
+    TypeConverter right() {
+        return seekX.plus(maxX);
+    }
+
+    TypeConverter up() {
+        return seekY;
+    }
+
+    enum Type {
+        point, pixel;
+    }
+
+    static class TypeConverter {
+        public static int square;
+        Type type;
+        int value;
+
+        public TypeConverter(Type type) {
+            this.type = type;
+        }
+
+        public TypeConverter(int value, Type type) {
+            this(type);
+            this.value = value;
+        }
+
+        public TypeConverter(TypeConverter t2) {
+            this(t2.value, t2.type);
+        }
+
+        int toPixel() {
+            if (type == Type.point) {
+                type = Type.pixel;
+                value *= square;
+            }
+            return value;
+        }
+
+        int toPoint() {
+            if (type == Type.pixel) {
+                type = Type.point;
+                value /= square;
+            }
+            return value;
+        }
+
+        public TypeConverter setValue(int value) {
+            this.value = value;
+            return this;
+        }
+
+        public TypeConverter setValue(int value, Type type) {
+            setValue(value);
+            this.type = type;
+            return this;
+        }
+
+        public int toInteger() {
+            return value;
+        }
+
+        public TypeConverter minus(TypeConverter t2) {
+            TypeConverter temp = new TypeConverter(t2);
+            temp.setValue(-temp.value);
+            return plus(temp);
+        }
+
+        public TypeConverter plus(TypeConverter t2) {
+            if (type != t2.type) {
+                TypeConverter temp = new TypeConverter(t2);
+                if (type == Type.pixel)
+                    temp.toPixel();
+                else
+                    temp.toPoint();
+            }
+            return new TypeConverter(value + t2.value, type);
+        }
+
+        @Override
+        public String toString() {
+            return "(" + value + "," + type + ")";
+        }
+    }
 
     class MyImage {
         ImageView imageView;
+        GeneralActivity context;
         TypeConverter width;
         com.destroyordefend.project.Core.Point center;
 
         public MyImage(Unit unit) {
-            this.imageView = new ImageView(ArenaActivity.this);
+
+            this.imageView = new ImageView(ArenaActivity.this.relativeLayout.getContext());
             this.imageView.setImageResource(getSuitableImage(unit.getName()));
-            this.width =new TypeConverter( unit.getRadius() * 2, TypeConverter.Type.point);
-            imageView.setLayoutParams(new ConstraintLayout.LayoutParams(width.toPixel(),width.toPixel()));
-            // imageView.getLayoutParams().height = width*square;
+            this.width = new TypeConverter(unit.getRadius() * 2, Type.point);
             this.center = new com.destroyordefend.project.Core.Point(unit.getPosition());
-           /* this.center.setX(center.getX() - (seekX / 11));
-            this.center.setY(center.getY() + (seekY / 11));*/
-            TypeConverter centerX = new TypeConverter(center.getX(), TypeConverter.Type.point);
-            TypeConverter centerY = new TypeConverter(center.getY(), TypeConverter.Type.point);
+            TypeConverter centerX = new TypeConverter(center.getX(), Type.point);
+            TypeConverter centerY = new TypeConverter(center.getY(), Type.point);
             centerX = centerX.minus(left());
             centerY = centerY.minus(up());
-            center.setX((int)centerX.toPixel());
-            center.setY((int)centerY.toPixel());
+            center.setX(centerX.toPixel());
+            center.setY(centerY.toPixel());
             Log.d("", "MyImage: center = " + center);
         }
 
@@ -183,7 +283,7 @@ public class ArenaActivity extends GeneralActivity {
         }
 
         public int getWidth() {
-            return (int)width.toInteger();
+            return width.toInteger();
         }
 
         public com.destroyordefend.project.Core.Point getCenter() {
@@ -223,99 +323,5 @@ public class ArenaActivity extends GeneralActivity {
             }
             return R.mipmap.test_icon;
         }
-    }
-
-    TypeConverter left() {
-        return seekX;
-    }
-
-    TypeConverter right() {
-        return seekX .plus(maxX);
-    }
-
-    TypeConverter up() {
-        return seekY ;
-    }
-
-    TypeConverter down() {
-        return seekY .plus(maxY);
-    }
-
-
-}
-
-class TypeConverter {
-    public enum Type {
-        point, pixel;
-    }
-
-    public static int square;
-    Type type;
-    int value;
-
-    public TypeConverter(Type type) {
-        this.type = type;
-    }
-
-    public TypeConverter(int value, Type type) {
-        this(type);
-        this.value = value;
-    }
-
-    public TypeConverter(TypeConverter t2) {
-        this(t2.value, t2.type);
-    }
-
-    int toPixel() {
-        if (type == Type.point) {
-            type = Type.pixel;
-            value *= square;
-        }
-        return value;
-    }
-
-    int toPoint() {
-        if (type == Type.pixel) {
-            type = Type.point;
-            value /= square;
-        }
-        return value;
-    }
-
-    public TypeConverter setValue(int value) {
-        this.value = value;
-        return this;
-    }
-
-    public TypeConverter setValue(int value, Type type) {
-        setValue(value);
-        this.type = type;
-        return this;
-    }
-
-    public int toInteger() {
-        return value;
-    }
-
-    public TypeConverter minus(TypeConverter t2) {
-        TypeConverter temp = new TypeConverter(t2);
-        temp.setValue(-temp.value);
-        return plus(temp);
-    }
-
-    public TypeConverter plus(TypeConverter t2) {
-        if (type != t2.type) {
-            TypeConverter temp = new TypeConverter(t2);
-            if (type == Type.pixel)
-                temp.toPixel();
-            else
-                temp.toPoint();
-        }
-        return new TypeConverter(value + t2.value, type);
-    }
-
-    @Override
-    public String toString() {
-        return "(" + value +","+ type+")";
     }
 }
