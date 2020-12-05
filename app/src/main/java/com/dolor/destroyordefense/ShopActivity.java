@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -52,20 +53,10 @@ public class ShopActivity extends GeneralActivity {
     }
 
     public void show(Unit.UnitValues unit) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Dialog))
-               /* .setPositiveButton("Buy", (dialog, whichButton) -> {
-                    try {
-                        currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
-                        startActivity(new Intent(ShopActivity.this, ArenaActivity.class));
-                        currentPlayer.setValue(playerIterator.next());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    dialog.dismiss();
-                })*/;
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Dialog));
         View v = getLayoutInflater().inflate(R.layout.activity_unit_details, null);
-        TextView name, range, speed, shotSpeed, health, damage, armor, radius, sortedMap, price;
-        Button next;
+        TextView name, range, speed, shotSpeed, health, damage, armor, radius, sortedMap, price, count;
+        Button next, plus, minus;
 
         name = v.findViewById(R.id.UnitName);
         name.setText("Name:             " + unit.getName());
@@ -96,19 +87,46 @@ public class ShopActivity extends GeneralActivity {
 
         price = v.findViewById(R.id.UnitPrice);
         price.setText("Price:                    " + unit.getPrice());
-
+        count = v.findViewById(R.id.count);
         next = v.findViewById(R.id.buy);
         next.setOnClickListener((v2) -> {
             try {
-                currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
+                // TODO: 05/12/2020 place the units in its correct place arround a square
+                int counter = Integer.parseInt(count.getText().toString());
+                for (int i = 0; i < counter; i++)
+                    currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
                 startActivity(new Intent(ShopActivity.this, ArenaActivity.class));
                 currentPlayer.setValue(playerIterator.next());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+        plus = v.findViewById(R.id.plus);
+        plus.setOnClickListener(v2 -> {
+            int playerPoints = Integer.parseInt(ShopActivity.this.playerPoints.getText().toString());
+            playerPoints -= unit.getPrice();
+            if (playerPoints < 0) {
+                Toast.makeText(ShopActivity.this, "There is no enough points", Toast.LENGTH_SHORT).show();
+            } else {
+                ShopActivity.this.playerPoints.setText(playerPoints + "");
+                count.setText(Integer.parseInt(count.getText().toString()) + 1 + "");
+            }
+        });
+        minus = v.findViewById(R.id.minus);
+        minus.setOnClickListener(v2 -> {
+            int counter = Integer.parseInt(count.getText().toString());
+            if (counter <= 0)
+                return;
+            int playerPoints = Integer.parseInt(ShopActivity.this.playerPoints.getText().toString());
+            playerPoints += unit.getPrice();
+            ShopActivity.this.playerPoints.setText(playerPoints + "");
+            count.setText(--counter + "");
+        });
         alertDialog/*.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())*/
                 .setView(v)
-                .create().show();
+                .setOnDismissListener(dialog ->
+                        ShopActivity.this.playerPoints.setText("" + currentPlayer.getValue().getPoints()))
+                .create().
+                show();
     }
 }

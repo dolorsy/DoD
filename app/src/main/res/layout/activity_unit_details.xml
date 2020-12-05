@@ -84,7 +84,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/UnitSpeed"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="UnknownId" />
 
     <TextView
         android:id="@+id/UnitHealth"
@@ -180,6 +181,53 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/UnitPrice"
         app:layout_constraintVertical_bias="0.957" />
+
+    <Button
+        android:id="@+id/minus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="52dp"
+        android:backgroundTint="@color/ColorNotColor3"
+        android:text="-"
+        android:textColor="@color/ColorWhite"
+        android:textSize="20sp"
+
+        app:layout_constraintBottom_toTopOf="@+id/buy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/UnitPrice" />
+
+    <Button
+        android:id="@+id/plus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="52dp"
+        android:backgroundTint="@color/ColorNotColor4"
+        android:text="+"
+        android:textColor="@color/ColorWhite"
+        android:textSize="20sp"
+
+        app:layout_constraintBottom_toBottomOf="@+id/minus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.39"
+        app:layout_constraintStart_toEndOf="@+id/count"
+        app:layout_constraintTop_toBottomOf="@+id/UnitPrice"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="64dp"
+        android:text="0"
+        android:textColor="@color/ColorWhite"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/minus"
+        app:layout_constraintStart_toEndOf="@+id/minus"
+        app:layout_constraintTop_toBottomOf="@+id/UnitPrice"
+        app:layout_constraintVertical_bias="0.776" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
