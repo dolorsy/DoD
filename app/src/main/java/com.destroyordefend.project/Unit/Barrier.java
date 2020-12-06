@@ -1,6 +1,10 @@
 package com.destroyordefend.project.Unit;
 
+import android.util.Log;
+
 import com.destroyordefend.project.Core.Point;
+
+import static android.content.ContentValues.TAG;
 
 public interface Barrier {
     boolean isAlive();
@@ -14,6 +18,8 @@ public interface Barrier {
     String getName();
 
     default boolean isSharedWith(Barrier b) {
+        Log.i(TAG, "isSharedWith: " + this.getName() + " " + this.getPosition());
+        Log.i(TAG, "isSharedWith: " + b.getName() + " " + b.getPosition());
         if (getPosition() == null || b == null || b.getPosition() == null)
             return false;
         return !(

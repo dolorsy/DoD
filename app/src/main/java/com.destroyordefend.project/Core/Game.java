@@ -8,12 +8,17 @@ import com.destroyordefend.project.Unit.Unit;
 import com.destroyordefend.project.utility.GameTimer;
 import com.destroyordefend.project.utility.UpdateMapAsyncTask;
 import com.destroyordefend.project.utility.UpdateRangeAsyncTask;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import static com.destroyordefend.project.Main.p;
@@ -29,7 +34,7 @@ enum States {
 public class Game {
     public static Game game;
     private Unit base;
-    private TreeSet<Unit> allUnits = new TreeSet<>((v1, v2) -> 1);
+    private TreeSet<Unit> allUnits = new TreeSet<>(new PointComparator());
     private TreeSet<Terrain> terrains = new TreeSet<>(new PointComparator());
     private States GameState = States.NotRunning;
     private Team attackers, defenders;
@@ -41,7 +46,7 @@ public class Game {
         defenders = new Team();
 
         base = new Unit(Shop.getInstance().getBaseValues());
-        base.setPosition(new Point(4,4));
+        settingUnit(new Point(200, 200), base, 1);
         base.setTreeSetUnit(new TreeSet<>(new PointComparator()));
         allUnits.add(base);
     }
@@ -59,7 +64,7 @@ Todo:: terrain need to add terrains
         terrains.add(t );*/
         gameTimer = new GameTimer(10);
         // CreateTeamsStage();
-       // autoInitGame();
+        // autoInitGame();
         UpdateUnits();
         this.StartBattle();
     }
@@ -69,6 +74,72 @@ Todo:: terrain need to add terrains
                 attackers :
                 defenders)
                 .addPlayer(p);
+    }
+
+    public boolean settingUnit(Point p, Unit unit, int count) {
+        Stack<Unit> addedUnits = new Stack<>();
+
+        int l = 2 * unit.getRadius();
+
+        List<Point> sides = new ArrayList<>(Arrays.asList(
+                new Point(p.getX() - l, p.getY()), new Point(p.getX(), p.getY() - l),
+                new Point(p.getX() + l, p.getY()), new Point(p.getX(), p.getY() + l)));
+        List<Point> addedPoints = new ArrayList<>(Arrays.asList(
+                new Point(-l, 0), new Point(0, -l),
+                new Point(+l, 0), new Point(0, +l)
+        ));
+
+        unit.setPosition(p);
+        if (noSharedPoints(unit)) {
+            count--;
+            addedUnits.add(unit);
+            if (count > 0)
+                unit = new Unit(unit);
+        }
+        boolean b = true;
+        while (b && count > 0) {
+            b = false;
+            for (int i = 0; i < 4 && count > 0; i++) {
+                unit.setPosition(sides.get(i));
+                if (noSharedPoints(unit)) {
+                    count--;
+                    //added to stack of unit to all them all letter
+                    addedUnits.add(unit);
+                    //update sides by adding x,y values that stored in addedPoints list
+                    Point side = sides.get(i);
+                    Point add = addedPoints.get(i);
+                    side.setX(side.getX() + add.getX());
+                    side.setY(side.getY() + add.getY());
+                    //if b becomes true when the loop is finished=>> a unit got its place , else cannot
+                    b = true;
+                    if (count > 0)//that mean we need another copy to place
+                        unit = new Unit(unit);
+                }
+            }
+        }
+        if (b)//can add
+            allUnits.addAll(addedUnits);
+        return b;
+    }
+
+    boolean noSharedPoints(Unit u) {
+        Point current = u.getPosition();
+        boolean result = true;
+        int left = u.getLeft();
+        int right = u.getRight();
+        int up = u.getUp();
+        int down = u.getDown();
+        if (left < 0 || up < 0)
+            return false;
+        for (int i = left; i <= right; i++) {
+            for (int j = up; j <= down; j++) {
+                u.setPosition(new Point(i, j));
+                if (allUnits.contains(u))
+                    result = false;
+            }
+        }
+        u.setPosition(current);
+        return result;
     }
 
     public TreeSet<Terrain> getTerrains() {
@@ -100,6 +171,7 @@ Todo:: terrain need to add terrains
                 attackers.getTeamPlayers().size() +
                         defenders.getTeamPlayers().size();
     }
+
     public boolean fullAttackers() {
         return attackerNumber == attackers.getTeamPlayers().size();
     }

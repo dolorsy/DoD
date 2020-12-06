@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.destroyordefend.project.Core.Shop;
 import com.destroyordefend.project.Unit.Unit;
+import com.dolor.destroyordefense.ArenaUtilities.ArenaActivity;
 
 import static com.dolor.destroyordefense.AndroidManger.currentPlayer;
 import static com.dolor.destroyordefense.AndroidManger.lastBoughtUnit;
@@ -56,7 +57,7 @@ public class ShopActivity extends GeneralActivity {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Dialog));
         View v = getLayoutInflater().inflate(R.layout.activity_unit_details, null);
         TextView name, range, speed, shotSpeed, health, damage, armor, radius, sortedMap, price, count;
-        Button next, plus, minus;
+        Button buy, plus, minus;
 
         name = v.findViewById(R.id.UnitName);
         name.setText("Name:             " + unit.getName());
@@ -88,14 +89,16 @@ public class ShopActivity extends GeneralActivity {
         price = v.findViewById(R.id.UnitPrice);
         price.setText("Price:                    " + unit.getPrice());
         count = v.findViewById(R.id.count);
-        next = v.findViewById(R.id.buy);
-        next.setOnClickListener((v2) -> {
+        buy = v.findViewById(R.id.buy);
+        buy.setOnClickListener((v2) -> {
             try {
                 // TODO: 05/12/2020 place the units in its correct place arround a square
                 int counter = Integer.parseInt(count.getText().toString());
+                if (counter == 0)
+                    return;
                 for (int i = 0; i < counter; i++)
                     currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
-                startActivity(new Intent(ShopActivity.this, ArenaActivity.class));
+                startActivity(new Intent(ShopActivity.this, ArenaActivity.class).putExtra("counter", counter));
                 currentPlayer.setValue(playerIterator.next());
             } catch (Exception e) {
                 e.printStackTrace();

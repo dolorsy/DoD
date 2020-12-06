@@ -12,7 +12,7 @@
         <activity android:name=".AddingPlayerActivity"></activity>
         <activity android:name=".ShopActivity" />
         <activity android:name=".UnitDetailsActivity" />
-        <activity android:name=".ArenaActivity" />
+        <activity android:name=".ArenaUtilities.ArenaActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
