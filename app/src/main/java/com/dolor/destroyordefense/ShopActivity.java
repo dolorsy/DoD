@@ -1,7 +1,9 @@
 package com.dolor.destroyordefense;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,7 +61,18 @@ public class ShopActivity extends AppCompatActivity {
 
     public void show(Unit.UnitValues unit) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Dialog));
-        View v = getLayoutInflater().inflate(R.layout.activity_unit_details, null);
+        View v = getLayout(unit);
+        Dialog dialog = alertDialog/*.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())*/
+                .setView(v)
+                .setOnDismissListener(dialog1 ->
+                        ShopActivity.this.playerPoints.setText("" + currentPlayer.getValue().getPoints()))
+                .create();
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+        dialog.show();
+    }
+
+    private View getLayout(Unit.UnitValues unit) {
+        View v = getLayoutInflater().inflate(R.layout.activity_unit_details, null, true);
         TextView name, range, speed, shotSpeed, health, damage, armor, radius, sortedMap, price, count;
         Button buy, plus, minus;
 
@@ -96,7 +109,6 @@ public class ShopActivity extends AppCompatActivity {
         buy = v.findViewById(R.id.buy);
         buy.setOnClickListener((v2) -> {
             try {
-                // TODO: 05/12/2020 place the units in its correct place arround a square
                 int counter = Integer.parseInt(count.getText().toString());
                 if (counter == 0)
                     return;
@@ -132,14 +144,8 @@ public class ShopActivity extends AppCompatActivity {
             ShopActivity.this.playerPoints.setText(playerPoints + "");
             count.setText(--counter + "");
         });
-        alertDialog/*.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())*/
-                .setView(v)
-                .setOnDismissListener(dialog ->
-                        ShopActivity.this.playerPoints.setText("" + currentPlayer.getValue().getPoints()))
-                .create().
-                show();
+        return v;
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.customization_action_bar, menu);
