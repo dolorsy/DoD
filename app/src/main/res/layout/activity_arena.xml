@@ -15,6 +15,7 @@
         android:min="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/scrollView2"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -36,15 +37,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/ic_launcher_background"
-        android:scrollbars="horizontal|vertical"
         app:layout_constraintBottom_toTopOf="@id/YseekBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/XseekBar"
-        app:layout_constraintVertical_bias="1.0"
-        tools:layout_editor_absoluteX="88dp">
+        app:layout_constraintVertical_bias="1.0">
 
         <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_width="1000dp"
+            android:layout_height="1000dp">
 
             <RelativeLayout
                 android:id="@+id/my_relative_layout"

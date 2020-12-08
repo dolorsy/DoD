@@ -31,6 +31,7 @@ public class ArenaActivity extends AppCompatActivity {
     //right down corner
     TypeConverter maxX, maxY;
     //current corner
+    static
     TypeConverter seekX = new TypeConverter(Type.point),
             seekY = new TypeConverter(Type.point);
     RelativeLayout relativeLayout;
@@ -45,7 +46,7 @@ public class ArenaActivity extends AppCompatActivity {
 
         xSeekBar = findViewById(R.id.XseekBar);
         ySeekBar = findViewById(R.id.YseekBar);
-
+        xSeekBar.requestApplyInsets();
         relativeLayout = findViewById(R.id.my_relative_layout);
         Display mdisp = getWindowManager().getDefaultDisplay();
         Point mdispSize = new Point();
@@ -54,6 +55,7 @@ public class ArenaActivity extends AppCompatActivity {
 
         maxX = new TypeConverter(mdispSize.x, Type.pixel);
         maxY = new TypeConverter(mdispSize.y, Type.pixel);
+
         Log.i("", "onCreate: maxX/Y" + maxX + " " + maxY);
         relativeLayout.setX(0);
         relativeLayout.setY(0);
@@ -107,17 +109,13 @@ public class ArenaActivity extends AppCompatActivity {
                     new com.destroyordefend.project.Core.Point(seekX.toInteger(), seekY.toInteger())
                     , lastBoughtUnit
                     , getIntent().getIntExtra("counter", -1));
-            Log.i("", "onCreateOptionsMenu:counter " + getIntent().getIntExtra("counter", -1));
-            for (Unit i : Game.getGame().getAllUnits()) {
-                Log.i("TAG", "onCreateOptionsMenu: " + i.getName() + " " + i.getPosition());
-            }
             if (done) {
-                Log.i("TAG", "onClick: lastBoughtUnit.pos " + lastBoughtUnit.getPosition());
                 Toast.makeText(this, "unit is bought", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, ShopActivity.class));
             } else {
                 Toast.makeText(this, "Can not set units here", Toast.LENGTH_SHORT).show();
             }
+
             return true;
         });
         return super.onCreateOptionsMenu(menu);
@@ -161,7 +159,7 @@ public class ArenaActivity extends AppCompatActivity {
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (action == KeyEvent.ACTION_DOWN && TypeConverter.square > 10) {
+                if (action == KeyEvent.ACTION_DOWN && TypeConverter.square > 1) {
                     TypeConverter.square -= 1;
                     updateScreen(Game.getGame().getAllUnits());
 

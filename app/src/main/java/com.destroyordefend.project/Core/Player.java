@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 public class Player {
     private int Points;
+    private boolean canBuy = true;
     private final int id;
     private TeamRole role;    //Is he attacker or Defender
     private String name;
@@ -30,6 +31,14 @@ public class Player {
     public void addArmy(Unit unit) {
         army.add(unit);
 
+    }
+
+    public boolean CanBuy() {
+        return canBuy;
+    }
+
+    public void stopBuy() {
+        canBuy = false;
     }
 
     public TeamRole getRole() {
@@ -74,6 +83,7 @@ public class Player {
     public enum TeamRole {
         Attacker, Defender
     }
+
 }
 
 class NoEnoughPointsException extends Exception {

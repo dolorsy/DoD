@@ -123,6 +123,15 @@ Todo:: terrain need to add terrains
     }
 
     boolean noSharedPoints(Unit u) {
+        if (u.getLeft() < 0 || u.getUp() < 0)
+            return false;
+        for (Unit i : allUnits) {
+            if (i.isSharedWith(u))
+                return false;
+        }
+        return true;
+
+        /*
         Point current = u.getPosition();
         boolean result = true;
         int left = u.getLeft();
@@ -140,6 +149,7 @@ Todo:: terrain need to add terrains
         }
         u.setPosition(current);
         return result;
+         */
     }
 
     public TreeSet<Terrain> getTerrains() {
@@ -320,9 +330,10 @@ Todo:: terrain need to add terrains
     }
 
     class PlayerIterator implements Iterator<Player> {
-
-        Iterator<Player> attack = attackers.getTeamPlayers().iterator(),
-                defend = defenders.getTeamPlayers().iterator();
+        List<Player> attackers = new ArrayList<>(Game.this.attackers.getTeamPlayers());
+        List<Player> defenders = new ArrayList<>(Game.this.defenders.getTeamPlayers());
+        Iterator<Player> attack = attackers.iterator(),
+                defend = defenders.iterator();
         Player.TeamRole role = Player.TeamRole.Attacker;
 
         @Override
@@ -335,14 +346,19 @@ Todo:: terrain need to add terrains
             if (role == Player.TeamRole.Attacker) {
                 role = Player.TeamRole.Defender;
                 if (!defend.hasNext())
-                    defend = defenders.getTeamPlayers().iterator();
+                    defend = defenders.iterator();
                 return defend.next();
             } else {
                 role = Player.TeamRole.Attacker;
                 if (!attack.hasNext())
-                    attack = attackers.getTeamPlayers().iterator();
+                    attack = attackers.iterator();
                 return attack.next();
             }
+        }
+
+        @Override
+        public void remove() {
+            (role == Player.TeamRole.Attacker ? attack : defend).remove();
         }
     }
 }

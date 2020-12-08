@@ -2,16 +2,20 @@ package com.dolor.destroyordefense;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.destroyordefend.project.Core.Player;
 import com.destroyordefend.project.Core.Shop;
 import com.destroyordefend.project.Unit.Unit;
 import com.dolor.destroyordefense.ArenaUtilities.ArenaActivity;
@@ -21,7 +25,7 @@ import static com.dolor.destroyordefense.AndroidManger.lastBoughtUnit;
 import static com.dolor.destroyordefense.AndroidManger.playerIterator;
 
 
-public class ShopActivity extends GeneralActivity {
+public class ShopActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     UnitAdapter unitAdapter;
 
@@ -99,6 +103,9 @@ public class ShopActivity extends GeneralActivity {
                 for (int i = 0; i < counter; i++)
                     currentPlayer.getValue().BuyAnArmy(lastBoughtUnit);
                 startActivity(new Intent(ShopActivity.this, ArenaActivity.class).putExtra("counter", counter));
+                Player p = currentPlayer.getValue();
+                if (!p.CanBuy())
+                    playerIterator.remove();
                 currentPlayer.setValue(playerIterator.next());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -131,5 +138,24 @@ public class ShopActivity extends GeneralActivity {
                         ShopActivity.this.playerPoints.setText("" + currentPlayer.getValue().getPoints()))
                 .create().
                 show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.customization_action_bar, menu);
+        MenuItem item = menu.findItem(R.id.start_game);
+        item.setOnMenuItemClickListener(
+                v -> {
+                    playerIterator.remove();
+                    if (playerIterator.hasNext())
+                        currentPlayer.setValue(playerIterator.next());
+                    else {
+                        Toast.makeText(this, "starting Game", Toast.LENGTH_SHORT).show();
+                        //todo : start game Game.getGame.startBattle();
+                    }
+                    return true;
+                }
+        );
+        return super.onCreateOptionsMenu(menu);
     }
 }
