@@ -45,6 +45,7 @@ public class FixedPatrol implements Movement {
 
         System.out.println("Stack size : " + track.size());
         Point p =Movement.straightMove(unit.getPosition(),track.peek());
+        System.out.println("Moved to " + p);
         return p;
     }
 

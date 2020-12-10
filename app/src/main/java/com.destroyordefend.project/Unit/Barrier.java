@@ -18,8 +18,7 @@ public interface Barrier {
     String getName();
 
     default boolean isSharedWith(Barrier b) {
-        Log.i(TAG, "isSharedWith: " + this.getName() + " " + this.getPosition());
-        Log.i(TAG, "isSharedWith: " + b.getName() + " " + b.getPosition());
+
         if (getPosition() == null || b == null || b.getPosition() == null)
             return false;
         return !(

@@ -1,8 +1,11 @@
 package com.destroyordefend.project.utility;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.destroyordefend.project.Core.Game;
 import com.destroyordefend.project.Tactic.Tactic;
 import com.destroyordefend.project.Unit.Unit;
+import com.dolor.destroyordefense.ArenaUtilities.ArenaActivity;
 
 
 import java.util.concurrent.ExecutorService;
@@ -19,7 +22,9 @@ import static com.destroyordefend.project.utility.UpdateRangeAsyncTask.updateRan
 public class GameTimer extends Thread {
 int RoundLength ;
 int currentSecond = 0;
-//public static ExecutorService executorService = Executors.newFixedThreadPool(5);
+
+
+    //public static ExecutorService executorService = Executors.newFixedThreadPool(5);
     public void run(){
         for(;currentSecond<=RoundLength;currentSecond++){
             try {
@@ -51,10 +56,13 @@ int currentSecond = 0;
                 executorService.submit(UpdateRangeAsyncTask::invokeUpdateRange);
                 executorService.submit(MainMethodAsyncTask::invokeMainMethods);
                 executorService.submit(this::reFill);
-*/
+*//*
 
                 Runnable method = UpdateMapAsyncTask::invokeUpdatePosition;
                 new Thread(method).start();
+                */
+                UpdateMapAsyncTask.invokeUpdatePosition();
+
                /* method = UpdateRangeAsyncTask::invokeUpdateRange;
                 new Thread(method).start();
                 method = MainMethodAsyncTask::invokeMainMethods;
@@ -77,6 +85,8 @@ int currentSecond = 0;
        // executorService.shutdown();
 
     }
+
+
 
     public GameTimer(int roundLength) {
         RoundLength = roundLength;

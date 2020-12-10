@@ -1,5 +1,7 @@
 package com.destroyordefend.project.Core;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.destroyordefend.project.Movement.FixedPatrol;
 import com.destroyordefend.project.Movement.FixedPosition;
 import com.destroyordefend.project.Tactic.RandomAttack;
@@ -41,14 +43,15 @@ public class Game {
     int attackerNumber, defenderNumber;
     GameTimer gameTimer;
 
+
     private Game() {
         attackers = new Team();
         defenders = new Team();
 
         base = new Unit(Shop.getInstance().getBaseValues());
-        settingUnit(new Point(200, 200), base, 1);
+        settingUnit(new Point(1000, 1000), base, 1);
         base.setTreeSetUnit(new TreeSet<>(new PointComparator()));
-        allUnits.add(base);
+     //   allUnits.add(base);
     }
 
     public static Game getGame() {
@@ -62,10 +65,12 @@ public class Game {
 Todo:: terrain need to add terrains
         Terrain t = new Terrain(new Point(30,100),2,"river");
         terrains.add(t );*/
-        gameTimer = new GameTimer(10);
+        gameTimer = new GameTimer(100);
         // CreateTeamsStage();
         // autoInitGame();
-        UpdateUnits();
+     //   UpdateUnits();
+        System.out.println("Game " + game.getAllUnits().size());
+
         this.StartBattle();
     }
 
@@ -205,7 +210,7 @@ Todo:: terrain need to add terrains
             allUnits.addAll(player.getArmy());
         }
         p(String.valueOf(allUnits.size()));
-        setNavigationForUnit();
+      //  setNavigationForUnit();
     }
 
     public void setNavigationForUnit() {

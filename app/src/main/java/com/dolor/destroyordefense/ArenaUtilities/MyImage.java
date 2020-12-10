@@ -43,13 +43,14 @@ public class MyImage {
     }
 
     private int getSuitableImage(String type) {
-        switch (type) {
+        System.out.println("type:  " + type);        switch (type) {
             case "TeslaTank":
                 break;
             case "Sniper":
                 break;
-            case "Mirage Tank":
-                break;
+            case "Mirage tank":
+                return R.drawable.mirage;
+
             case "Infantry":
                 break;
             case "Grizzly Tank":

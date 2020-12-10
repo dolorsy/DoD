@@ -1,0 +1,5 @@
+<resources>
+
+    <declare-styleable name="GestureView">
+    </declare-styleable>
+</resources>
