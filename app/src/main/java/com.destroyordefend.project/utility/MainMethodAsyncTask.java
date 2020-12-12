@@ -2,7 +2,6 @@ package com.destroyordefend.project.utility;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 public class MainMethodAsyncTask {
 
@@ -21,7 +20,6 @@ public class MainMethodAsyncTask {
      */
 
     public static void invokeMainMethods() {
-        System.out.println("Main Meth Thread name: " + Thread.currentThread().getName());
         for(Runnable updatePosition : doMainThingQueue) {
             updatePosition.run();
         }

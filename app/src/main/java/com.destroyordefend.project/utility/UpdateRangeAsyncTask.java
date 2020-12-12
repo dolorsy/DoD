@@ -24,7 +24,6 @@ public class UpdateRangeAsyncTask {
 
     public static void invokeUpdateRange()
     {
-        System.out.println("Range Thread name: " + Thread.currentThread().getName());
         for(Runnable updateRange : updateRangeQueue) {
             updateRange.run();
         }

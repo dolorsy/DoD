@@ -2,6 +2,7 @@ package com.dolor.destroyordefense.ArenaUtilities;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -25,8 +26,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.destroyordefend.project.Core.Game;
+import com.destroyordefend.project.Unit.Terrain;
 import com.destroyordefend.project.Unit.Unit;
 import com.destroyordefend.project.utility.GameTimer;
+import com.dolor.destroyordefense.GameOverWinActivity;
 import com.dolor.destroyordefense.R;
 import com.dolor.destroyordefense.ShopActivity;
 
@@ -36,6 +39,7 @@ import java.util.Timer;
 import java.util.TreeSet;
 
 import static com.destroyordefend.project.Core.Game.game;
+import static com.destroyordefend.project.Core.Game.getGame;
 import static com.dolor.destroyordefense.AndroidManger.lastBoughtUnit;
 
 public class ArenaActivity extends AppCompatActivity
@@ -45,8 +49,13 @@ implements
     TypeConverter maxX, maxY;
 
     View gestureView;
+
+    static MutableLiveData<String> gameState = new MutableLiveData<>();
+
+
+
     private GestureDetector mGestureDetector;
-    //private ScaleGestureDetector detector;
+  //  private ScaleGestureDetector detector;
     int zoom = 1;
     float s = 0;
      float scale  = 1f;
@@ -58,6 +67,7 @@ implements
     RelativeLayout relativeLayout;
     SeekBar xSeekBar, ySeekBar;
     List<MyImage> inRange = new ArrayList<>();
+    List<MyImage> tinRange = new ArrayList<>();
     MutableLiveData<TreeSet<Unit>> liveData = new MutableLiveData<>();
 
 
@@ -71,8 +81,12 @@ implements
         mGestureDetector = new GestureDetector(this,this);
         gestureView = findViewById(R.id.gestureView);
         gestureView.setOnTouchListener(this);
-       // detector = new ScaleGestureDetector(this, new MyScaleListener());
+      //  detector = new ScaleGestureDetector(this, new MyScaleListener());
 
+        gameState.observe(this, s -> {
+            startActivity(new Intent(this, GameOverWinActivity.class));
+            finish();
+        });
 
         xSeekBar = findViewById(R.id.XseekBar);
         ySeekBar = findViewById(R.id.YseekBar);
@@ -83,14 +97,12 @@ implements
         mdisp.getSize(mdispSize);
         TypeConverter.square = 1;
 
-        maxX = new TypeConverter(mdispSize.x, Type.pixel);
-        maxY = new TypeConverter(mdispSize.y, Type.pixel);
+        maxX = new TypeConverter(mdispSize.x , Type.pixel);
+        maxY = new TypeConverter(mdispSize.y , Type.pixel);
 
-        Log.i("", "onCreate: maxX/Y" + maxX + " " + maxY);
         relativeLayout.setX(0);
         relativeLayout.setY(0);
-        Log.d("TAG", "onCreate: allUnit.size()" + Game.getGame().getAllUnits().size());
-        updateScreen(Game.getGame().getAllUnits());
+        updateScreen(Game.getGame().getAllUnits(),getGame().getTerrains());
 
 
 
@@ -100,7 +112,7 @@ implements
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seekX.setValue(progress, Type.point);
                 setTitle("X : " + seekX.toInteger() + " Y : " + seekY.toInteger());
-                updateScreen(Game.getGame().getAllUnits());
+                updateScreen(Game.getGame().getAllUnits(),Game.getGame().getTerrains());
 
             }
 
@@ -118,7 +130,7 @@ implements
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seekY.setValue(progress, Type.point);
                 setTitle("X : " + seekX.toInteger() + " Y : " + seekY.toInteger());
-                updateScreen(Game.getGame().getAllUnits());
+                updateScreen(Game.getGame().getAllUnits(),Game.getGame().getTerrains());
             }
 
             @Override
@@ -127,7 +139,7 @@ implements
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                updateScreen(Game.getGame().getAllUnits());
+                updateScreen(Game.getGame().getAllUnits(),Game.getGame().getTerrains());
             }
         });
 
@@ -136,11 +148,11 @@ implements
         final Runnable r = new Runnable() {
             @Override
             public void run() {
-                handler.postDelayed(this,10);
-                updateScreen(Game.getGame().getAllUnits());
+                handler.postDelayed(this,20);
+                updateScreen(Game.getGame().getAllUnits(),Game.getGame().getTerrains());
             }
         };
-        handler.postDelayed(r,0000);
+        handler.postDelayed(r, 0);
         System.out.println(Game.getGame().getAllUnits().size());
 
         Game.getGame().StartAnewGame();
@@ -170,19 +182,29 @@ implements
         return super.onCreateOptionsMenu(menu);
     }
 
-    void updateScreen(TreeSet<Unit> allUnits) {
+    void updateScreen(TreeSet<Unit> allUnits, TreeSet<Terrain> terrains) {
         relativeLayout.removeAllViews();
         inRange = new ArrayList<>();
+        tinRange = new ArrayList<>();
         relativeLayout.requestLayout();
         for (Unit unit : allUnits) {
             inRange.add(new MyImage(unit, this));
         }
+        for (Terrain terrain:terrains)
+            tinRange.add(new MyImage(terrain,this));
         startUpdate();
 
     }
 
 
     void startUpdate() {
+        for (MyImage myImage : tinRange) {
+            ImageView iv = myImage.imageView;
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(myImage.width.toPixel(), myImage.width.toPixel());
+            params.leftMargin = myImage.center.getX();
+            params.topMargin = myImage.center.getY();
+            relativeLayout.addView(iv, params);
+        }
         for (MyImage myImage : inRange) {
             ImageView iv = myImage.imageView;
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(myImage.width.toPixel(), myImage.width.toPixel());
@@ -190,6 +212,7 @@ implements
             params.topMargin = myImage.center.getY();
             relativeLayout.addView(iv, params);
         }
+
     }
 
     @Override
@@ -205,14 +228,14 @@ implements
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
                     TypeConverter.square += 1;
-                    updateScreen(Game.getGame().getAllUnits());
+                    updateScreen(Game.getGame().getAllUnits(),Game.getGame().getTerrains());
 
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_DOWN && TypeConverter.square > 1) {
                     TypeConverter.square -= 1;
-                    updateScreen(Game.getGame().getAllUnits());
+                    updateScreen(Game.getGame().getAllUnits(),Game.getGame().getTerrains());
 
                 }
                 return true;
@@ -321,7 +344,7 @@ implements
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        //detector.onTouchEvent(event);
+  //      detector.onTouchEvent(event);
         onTouchEvent(event);
         mGestureDetector.onTouchEvent(event);
         return true;
@@ -340,12 +363,12 @@ implements
             //Here we zoom;
             s =detector.getCurrentSpan() - detector.getPreviousSpan();
 
-            if(s > 90){
+            if(s > 20){
                 //zoom in
-                TypeConverter.square -= (int)s/90;
+                TypeConverter.square -= (int)s/3;
 
-            }else if(detector.getCurrentSpan() - detector.getPreviousSpan() < -90) {
-                TypeConverter.square += (int)s/90;
+            }else if(s<-20) {
+                TypeConverter.square += (int)s/3;
 
             }
             scale = detector.getScaleFactor();
@@ -353,7 +376,7 @@ implements
             if(s>1100) {
                 //TypeConverter.square -= (int)s/1100;
             }
-            updateScreen(Game.getGame().getAllUnits());
+            updateScreen(Game.getGame().getAllUnits(),Game.getGame().getTerrains());
 
             return true;
         }
@@ -389,4 +412,9 @@ implements
             super.onScaleEnd(detector);
         }
     }
+
+    public static void updateUiState(String state){
+//        gameState.setValue(state);
+    }
+
 }

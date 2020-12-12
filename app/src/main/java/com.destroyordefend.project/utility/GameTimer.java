@@ -1,78 +1,58 @@
 package com.destroyordefend.project.utility;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.destroyordefend.project.Core.Game;
-import com.destroyordefend.project.Tactic.Tactic;
 import com.destroyordefend.project.Unit.Unit;
-import com.dolor.destroyordefense.ArenaUtilities.ArenaActivity;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Observable;
+import java.util.Observer;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static com.destroyordefend.project.Core.Game.game;
+import static com.destroyordefend.project.Core.Game.getGame;
 import static com.destroyordefend.project.utility.MainMethodAsyncTask.doMainThingQueue;
-import static com.destroyordefend.project.utility.MainMethodAsyncTask.invokeMainMethods;
-import static com.destroyordefend.project.utility.UpdateMapAsyncTask.invokeUpdatePosition;
 import static com.destroyordefend.project.utility.UpdateMapAsyncTask.updatePositionQueue;
-import static com.destroyordefend.project.utility.UpdateRangeAsyncTask.invokeUpdateRange;
 import static com.destroyordefend.project.utility.UpdateRangeAsyncTask.updateRangeQueue;
 
-public class GameTimer extends Thread {
+public class GameTimer extends Thread implements Observer {
 int RoundLength ;
 int currentSecond = 0;
-
-
-    //public static ExecutorService executorService = Executors.newFixedThreadPool(5);
+Thread updatePositionsThread = new Thread();
+Thread updateRangeThread = new Thread();
+    Thread updateMainThread = new Thread();
+//public static ExecutorService executorService = Executors.newFixedThreadPool(5);
     public void run(){
+
         for(;currentSecond<=RoundLength;currentSecond++){
             try {
-
 
                 //Todo: Be Careful About Time Of the Following Three Methods, it should be 0.9 Second For Them all Together
                 //Todo:May Be You need Exception Handling
                 //Todo: We should invoke All Players UpdateArmy
-//
-//                for(Unit u: game.getAllUnits()){
-//
-//
-//                    for(int i =0;i<u.getCurrentSpeed();i++)
-//                    UpdateMapAsyncTask.addMethod(u::Move);
-//                    UpdateRangeAsyncTask.addMethod(u::UpdateRange);
-//                    if(!u.getTreeSetUnit().isEmpty()){
-//                        Runnable method = () -> u.getDamaging().DoDamage();
-//                        MainMethodAsyncTask.addMethod(method);
-//                    }
-//;
-//
-//                }
-                /*
-                  The PREVIOUS Code is a big Mistake
-                  */
-                long current = System.currentTimeMillis();
-/*
-                executorService.submit(UpdateMapAsyncTask::invokeUpdatePosition);
-                executorService.submit(UpdateRangeAsyncTask::invokeUpdateRange);
-                executorService.submit(MainMethodAsyncTask::invokeMainMethods);
-                executorService.submit(this::reFill);
-*//*
 
-                Runnable method = UpdateMapAsyncTask::invokeUpdatePosition;
-                new Thread(method).start();
-                */
-                UpdateMapAsyncTask.invokeUpdatePosition();
+                if(getGame().getGameStateName().equals("Running")) {
+                    long current = System.currentTimeMillis();
 
-               /* method = UpdateRangeAsyncTask::invokeUpdateRange;
-                new Thread(method).start();
-                method = MainMethodAsyncTask::invokeMainMethods;
-                new Thread(method);*/
 
-                current = System.currentTimeMillis()-current;
-                System.out.println("Spended Time " + current + "  " + currentSecond);
-                Thread.sleep(1000 - current);
-                reFill();
+            updatePositionsThread = new Thread(UpdateMapAsyncTask::invokeUpdatePosition);
+             updatePositionsThread.start();
+             /*updateRangeThread = new Thread(UpdateRangeAsyncTask::invokeUpdateRange);
+             updateRangeThread.start();
+             */
 
+             updateMainThread = new Thread(MainMethodAsyncTask::invokeMainMethods);
+                    updateMainThread.start();
+
+                    current = System.currentTimeMillis() - current;
+                    Thread.sleep(1000 - current);
+                    //getGame().UpdateUnits();
+                    reFill();
+                }else if(getGame().getGameStateName().equals("AttackerWin") || getGame().getGameStateName().equals("DefenderWin")){
+                    Log.GameOver("GameOver, "  + getGame().getGameStateName());
+                    this.interrupt();
+                    break;
+                }else{
+                    currentSecond--;
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
 
@@ -81,15 +61,19 @@ int currentSecond = 0;
 
         }
 
-
+        if(currentSecond == RoundLength)
+        GoodEnd();
        // executorService.shutdown();
 
     }
 
-
-
     public GameTimer(int roundLength) {
         RoundLength = roundLength;
+
+    }
+    private void GoodEnd(){
+        getGame().setGameStateName("DefenderWin");
+        System.out.println("Times up " + getGame().getGameStateName());
 
     }
     public boolean onEnd(){
@@ -101,29 +85,29 @@ int currentSecond = 0;
     }
 
     void reFill(){
+
         updatePositionQueue.clear();
         updateRangeQueue.clear();
         doMainThingQueue.clear();
-        for(Unit unit: game.getAllUnits()){
+        for(Unit unit: getGame().getAllUnits()){
+            if(unit.getName().equals("MAIN BASE"))
+                continue;
+            unit.Move();
 
-            UpdateMapAsyncTask.addMethod(unit::Move);
-            UpdateRangeAsyncTask.addMethod(() -> unit.getTactic().SortMap(unit));
+
+        //Todo: here we can make damaging more real
+            if( unit.getDamaging().CanShot()>0 && !unit.getName().equals("Black Eagle"))
+                for(int i =0;i<unit.getDamaging().CanShot();i++)
             MainMethodAsyncTask.addMethod(() ->unit.getDamaging().DoDamage());
         }
+//        Collections.shuffle(updatePositionQueue);
+
     }
 
-     public boolean pause(){
-        try {
-            this.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
-    public boolean resumee(){
-        this.notify();
-        return false;
+    @Override
+    public void update(Observable o, Object arg) {
+        //Todo:: its not used
     }
 }
 

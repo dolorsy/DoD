@@ -1,34 +1,42 @@
 package com.destroyordefend.project.Movement;
 
 
+import com.destroyordefend.project.Core.Game;
 import com.destroyordefend.project.Core.Point;
 import com.destroyordefend.project.Unit.Barrier;
+import com.destroyordefend.project.Unit.Terrain;
 import com.destroyordefend.project.Unit.Unit;
+import com.destroyordefend.project.utility.PositionHelper;
+import org.json.simple.JSONObject;
 
 import java.util.Stack;
 
-import static com.destroyordefend.project.Core.Game.game;
-
 public interface Movement {
 
+
+    void StartMove(Unit unit);
+    void addTarget(Point p, Unit u);
+
     Point GetNextPoint(Unit unit);
-    public Stack<Point> getTruck();
+
+    Stack<Point> getTruck();
+
+
     static Barrier canSetUnitPlace(Point point, Unit unit) {
-        Unit temp = new Unit(unit);
-        temp.setPosition(point);
-        if (temp.isSharedWith(temp.getNeighbourUnit("left")))
-            return temp.getNeighbourUnit("left");
-        else if (temp.isSharedWith(temp.getNeighbourUnit("right")))
-            return temp.getNeighbourUnit("right");
-        else {
-            //Todo: need to change // we should check left/right/up down shouldn't we?
-            for (Barrier u : game.getTerrains()) {
-                if ((u.isSharedWith(temp)) /*&& !u.getPosition().equals(temp.getPosition())*/) {
-                    return u;
-                }
+
+        Barrier b = PositionHelper.getInstance().canSetAt(unit, point);
+        if (b != null)
+            return b;
+        Point cur = unit.getPosition();
+        unit.setPosition(point);
+        for (Terrain t : Game.getGame().getTerrains()) {
+            if (t.isSharedWith(unit)) {
+                unit.setPosition(cur);
+                return t;
             }
-            return null;
         }
+        unit.setPosition(cur);
+        return null;
     }
 
     static Point straightMove(Point src, Point dis) {
@@ -36,42 +44,72 @@ public interface Movement {
         int currentY = src.getY();
         int targetX = dis.getX();
         int targetY = dis.getY();
+        double curdist = src.distance(dis);
         if (currentX != targetX) {
-            currentX += currentX < targetX ? 1 : -1;
+            //currentX += currentX < targetX ? 1 : -1;
+            if(currentX>targetX)
+                currentX--;
+            else
+                currentX++;
         }
         if (currentY != targetY) {
-            currentY += currentY < targetY ? 1 : -1;
+            //// currentY += currentY < targetY ? 1 : -1;
+            if(currentY>targetY)
+                currentY--;
+            else
+                currentY++;
         }
-        return new Point(currentX, currentY);
+        dis = new Point(currentX, currentY);
+        double newDist = src.distance(dis);
+        if(curdist<newDist)
+            throw new RuntimeException("move does not work"+ currentX+" "+currentY);
+        return dis;
     }
 
-    default boolean SetNextPoint(Unit unit) {
-        return true;
-    }
+    static boolean setNext(Unit unit, Point n) {
+        Barrier barrier = Movement.canSetUnitPlace(n, unit);
+        if (barrier == null || barrier.is("river")) {
+            PositionHelper.getInstance().setUnitPlace(unit, n);
+            System.out.println(unit.getPosition());
+            return barrier != null;
+        }
+        System.out.println("gomu gomu noo");
 
-     static boolean setNext(Unit unit,Point n){
-
-        // Point n = Movement.straightMove(unit.getPosition(),track.peek());
-        Barrier barrier = Movement.canSetUnitPlace(n,unit);
-         System.out.println("uni : " + unit.getPosition() + " r: " + unit.getRadius() + " next: " + n) ;
-        if(barrier != null){
-            if(barrier.getName().equals("river")) {
-                unit.setPosition(n);
+        Point[] corners = {
+                new Point(barrier.getLeft() - unit.getRadius()-1, barrier.getDown() + unit.getRadius()+1),
+                new Point(barrier.getRight() + unit.getRadius()+1, barrier.getDown() + unit.getRadius()+1),
+                new Point(barrier.getLeft() - unit.getRadius()-1, barrier.getUp() - unit.getRadius()-1),
+                new Point(barrier.getRight() + unit.getRadius()+1, barrier.getUp() - unit.getRadius()-1)
+        };
+        Point target = unit.getMovement().getTarget();
+        Point closer = corners[getCloserTo(target, corners)];
+        unit.getMovement().getTruck().push(closer);
+        int indexOfFarther = getFartherTo(closer, corners);
+        corners[indexOfFarther] = null;
+        indexOfFarther = getCloserTo(unit.getPosition(),corners);
+        unit.getMovement().getTruck().push(corners[indexOfFarther]);
+//        if(canSetUnitPlace(p,unit)==null)
+//            PositionHelper.getInstance().setUnitPlace(unit, n);
+        /*
+        if (barrier != null) {
+            if (barrier.getName().equals("river")) {
+                PositionHelper.getInstance().setUnitPlace(unit, n);
                 return true;
             }
-            Point[] corners = {barrier.getDownLeftCorner(),barrier.getDownRightCorner(),barrier.getUpRightCorner(),barrier.getUpLeftCorner()};
+            Point[] corners = {barrier.getDownLeftCorner(), barrier.getDownRightCorner(),
+                    barrier.getUpLeftCorner(), barrier.getUpRightCorner()};
             int min = 0;
-            int nextp = 1 ;
+            int nextp = 1;
             double curDist = unit.getPosition().distance(corners[0]);
             for (int i = 0; i < 4; i++) {
                 double curAns = (unit.getPosition().distance(corners[i]));
-                if (curAns < curDist ) {
+                if (curAns < curDist) {
                     min = i;
-                    if(corners[i].getX() > unit.getRight())
+                    if (corners[i].getX() > unit.getRight())
                         nextp = 3;
-                    else if(corners[i].getX() < unit.getLeft())
+                    else if (corners[i].getX() < unit.getLeft())
                         nextp = 4;
-                    else if(corners[i].getY() < unit.getDown())
+                    else if (corners[i].getY() < unit.getDown())
                         nextp = 2;
                     else
                         nextp = 1;
@@ -80,27 +118,27 @@ public interface Movement {
                 }
             }
             switch (min) {
-                case 0 : {
+                case 0: {
                     corners[min].setX(corners[min].getX() - unit.getRadius());
                     corners[min].setY(corners[min].getY() - unit.getRadius());
                     break;
                 }
-                case 1 : {
+                case 1: {
                     corners[min].setX(corners[min].getX() + unit.getRadius());
                     corners[min].setY(corners[min].getY() - unit.getRadius());
                     break;
                 }
-                case 2 : {
+                case 2: {
                     corners[min].setX(corners[min].getX() + unit.getRadius());
                     corners[min].setY(corners[min].getY() + unit.getRadius());
                     break;
                 }
-                case 3 : {
+                case 3: {
                     corners[min].setX(corners[min].getX() - unit.getRadius());
                     corners[min].setY(corners[min].getY() + unit.getRadius());
                     break;
                 }
-                default :
+                default:
                     throw new IllegalStateException("Unexpected value: " + min);
             }
 
@@ -110,30 +148,64 @@ public interface Movement {
                     corners[nextp].setY(corners[nextp].getY() - unit.getRadius());
                     break;
                 }
-                case 1 : {
+                case 1: {
                     corners[nextp].setX(corners[nextp].getX() + unit.getRadius());
                     corners[nextp].setY(corners[nextp].getY() - unit.getRadius());
                     break;
                 }
-                case 2 : {
+                case 2: {
                     corners[nextp].setX(corners[nextp].getX() + unit.getRadius());
                     corners[nextp].setY(corners[nextp].getY() + unit.getRadius());
                     break;
                 }
-                case 3 : {
+                case 3: {
                     corners[nextp].setX(corners[nextp].getX() - unit.getRadius());
                     corners[nextp].setY(corners[nextp].getY() + unit.getRadius());
                     break;
                 }
-                default :
-                    throw new IllegalStateException("Unexpected value: " + min);
+                default:
+                    throw new IllegalStateException("Unexpected value: " + nextp);
             }
 
             unit.getMovement().getTruck().push(corners[nextp]);
             unit.getMovement().getTruck().push(corners[min]);
         }
         //Todo: Should Update n here? n = makeAnewPoint(unit); ???? no it should be in unit.move();
-        unit.setPosition(n);
+*/
+        //PositionHelper.getInstance().setUnitPlace(unit, n);
         return false;
+    }
+
+    Point getTarget();
+
+    @Override
+    String toString();
+
+     static int getCloserTo(Point target, Point[] points) {
+        int index = -1;
+        double minValue = 1000000000;
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null || target.equals(points[i]))
+                continue;
+            if (minValue > points[i].distance(target)) {
+                minValue = points[i].distance(target);
+                index = i;
+            }
+        }
+        return index;
+    }
+
+     static int getFartherTo(Point target, Point[] points) {
+        int index = -1;
+        double maxValue = -10000000;
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null || target.equals(points[i]))
+                continue;
+            if (maxValue < points[i].distance(target)) {
+                maxValue = points[i].distance(target);
+                index = i;
+            }
+        }
+        return index;
     }
 }

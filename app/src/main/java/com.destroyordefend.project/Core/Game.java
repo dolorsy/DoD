@@ -2,14 +2,19 @@ package com.destroyordefend.project.Core;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.destroyordefend.project.Movement.AircraftMovement;
 import com.destroyordefend.project.Movement.FixedPatrol;
 import com.destroyordefend.project.Movement.FixedPosition;
+import com.destroyordefend.project.Movement.ToTarget;
+import com.destroyordefend.project.Tactic.AirAttack;
 import com.destroyordefend.project.Tactic.RandomAttack;
 import com.destroyordefend.project.Unit.Terrain;
 import com.destroyordefend.project.Unit.Unit;
 import com.destroyordefend.project.utility.GameTimer;
+import com.destroyordefend.project.utility.PositionHelper;
 import com.destroyordefend.project.utility.UpdateMapAsyncTask;
 import com.destroyordefend.project.utility.UpdateRangeAsyncTask;
+import com.dolor.destroyordefense.ArenaUtilities.ArenaActivity;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -60,17 +65,25 @@ public class Game {
         return game;
     }
 
+    public Team getAttackers() {
+        return attackers;
+    }
+
+    public Team getDefenders() {
+        return defenders;
+    }
+
     public void StartAnewGame() {
-/*
-Todo:: terrain need to add terrains
-        Terrain t = new Terrain(new Point(30,100),2,"river");
-        terrains.add(t );*/
+
+//Todo:: terrain need to add terrains
+
+
         gameTimer = new GameTimer(100);
         // CreateTeamsStage();
         // autoInitGame();
      //   UpdateUnits();
-        System.out.println("Game " + game.getAllUnits().size());
-
+     //   autoInitGame();
+        UpdateUnits();
         this.StartBattle();
     }
 
@@ -170,15 +183,9 @@ Todo:: terrain need to add terrains
     }
 
     private void StartBattle() {
+        setGameState(States.Running);
         gameTimer.start();
         p("Start Battle");
-        p(String.valueOf(allUnits.size()));
-        for (Unit unit : allUnits) {
-            p(unit.toString());
-            UpdateMapAsyncTask.addMethod(unit::Move);
-            UpdateRangeAsyncTask.addMethod(unit::UpdateRange);
-            //Todo:Main method add to it Async Task
-        }
     }
 
     public boolean oneMore() {
@@ -200,17 +207,14 @@ Todo:: terrain need to add terrains
         allUnits = new TreeSet<>(new PointComparator());
 
         for (Player player : attackers.getTeamPlayers()) {
-            for (Unit unit : player.getArmy()) {
-                unit.setHealth(10);//todo : I think this should be removed
-                unit.setRole(player.getRole());
-                allUnits.add(unit);
-            }
+            allUnits.addAll(player.getArmy());
         }
         for (Player player : defenders.getTeamPlayers()) {
             allUnits.addAll(player.getArmy());
         }
-        p(String.valueOf(allUnits.size()));
-      //  setNavigationForUnit();
+        for (Unit u : allUnits)
+            System.out.println(u);
+        setNavigationForUnit();
     }
 
     public void setNavigationForUnit() {
@@ -225,20 +229,39 @@ Todo:: terrain need to add terrains
             left = curr;
             curr = allUnits.iterator().next();
             curr.setLeftUnit(left);
-        }*/
+        }
         //TOdo :need to check
-        Unit left, right = null, cur;
+        Unit left , right = null, cur;
+        if (allUnits.size() == 0)
+            return;
         Iterator<Unit> unitIterator = allUnits.iterator();
         left = null;
         cur = unitIterator.next();
-        if (unitIterator.hasNext())
-            right = unitIterator.next();
-        while (unitIterator.hasNext()) {
+
+
+        do {
+            if (unitIterator.hasNext())
+                right = unitIterator.next();
             cur.setNeighbourUnit("left", left);
             cur.setNeighbourUnit("right", right);
+
             left = cur;
             cur = right;
-            right = unitIterator.next();
+//            System.out.println("curr id : " + cur.getId() + " " + cur.getPosition());
+//            System.out.println("left : " + cur.getNeighbourUnit("left").getId() +  cur.getNeighbourUnit("left").getPosition());
+//            System.out.println("right : " + cur.getNeighbourUnit("right").getId() +  cur.getNeighbourUnit("right").getPosition());
+//
+
+            //  right = unitIterator.next();
+        } while (unitIterator.hasNext());
+        cur.setNeighbourUnit("left", left);
+        cur.setNeighbourUnit("right", null);
+
+         */
+        for (Unit u : allUnits){
+            if(PositionHelper.getInstance().canSetAt(u,u.getPosition())!=null)
+                throw new RuntimeException(u.getName()+" "+u.getPosition()+" cannot set");
+            PositionHelper.getInstance().setUnitPlace(u, u.getPosition());
         }
     }
 
@@ -255,6 +278,7 @@ Todo:: terrain need to add terrains
     }
 
     public void setPlayersNumbers(int attackerNumber, int defenderNumber) {
+        //Used in android
         if (this.attackerNumber > 0 || this.defenderNumber > 0)
             return;
         if (attackerNumber <= 0 || defenderNumber <= 0)
@@ -264,6 +288,7 @@ Todo:: terrain need to add terrains
     }
 
     public void CreateTeamsStage() {
+        /*
         String path = "src\\com\\destroyordefend\\project\\Teams.json";
         JSONParser jsonParser = new JSONParser();
         try {
@@ -280,6 +305,7 @@ Todo:: terrain need to add terrains
         } catch (Exception e) {
             e.printStackTrace();
         }
+        */
     }
 
     PlayerIterator temp = null;
@@ -292,46 +318,74 @@ Todo:: terrain need to add terrains
         } else if (gameTimer.onEnd()) {
             setGameState(States.DefenderWin);
         }
+        ArenaActivity.updateUiState(GameState.name());
+        System.out.println(GameState.name());
+
     }
 
     public void DeleteUnit(Unit unit) {
         p("Removed id " + unit.getId());
-        p(unit.getRole().name());
         (unit.getRole().equals(Player.TeamRole.Attacker) ?
                 attackers :
                 defenders).removeUnit(unit);
-        allUnits.remove(unit);
+        allUnits.removeIf(unit1 -> unit.getId() == unit1.getId());
+        UpdateState();
     }
 
     private void autoInitGame() {
-        Unit defndUnit = new Unit();
-        defndUnit.setRole(Player.TeamRole.Defender);
-        defndUnit.setPosition(new Point(200, 23));
-        defndUnit.setHealth(200);
-        defndUnit.getValues().setName("Main Base");
-        defndUnit.setShot_speed(0);
-        defndUnit.setSpeed(0);
-        defndUnit.AcceptMovement(new FixedPosition());
-        defndUnit.AcceptTactic(new RandomAttack());
-        Unit attackUnit = new Unit();
+        Player Defender = new Player();
+        Defender.setRole(Player.TeamRole.Defender);
+        Player Attacker = new Player();
+        Attacker.setRole(Player.TeamRole.Attacker);
 
-        Unit.UnitValues values = Shop.getInstance().getUnitByName("TeslaTank");
-        attackUnit.setRole(Player.TeamRole.Attacker);
-        attackUnit.setPosition(new Point(20, 20));
-        attackUnit.setValues(values);
+        attackers.addPlayer(Attacker);
+        defenders.addPlayer(Defender);
+        base.setRole(Player.TeamRole.Defender);
+        Defender.addArmy(base);
 
-        attackUnit.AcceptMovement(new /*ToTarget(defndUnit)*/ FixedPatrol(80));
-        attackUnit.AcceptTactic(new RandomAttack());
-        Player attacker = new Player();
-        attacker.addArmy(attackUnit);
+        Unit unit = new Unit();
+        unit.setValues(Shop.getInstance().getUnitByName("TeslaTank"));
+        unit.setPosition(new Point(1000,300));
+        unit.AcceptMovement(new ToTarget(base));
+        unit.setRole(Player.TeamRole.Attacker);
+        unit.AcceptTactic(new RandomAttack());
+        Attacker.addArmy(unit);
 
-        attackers.addPlayer(attacker);
+
+        System.out.println(Attacker);
+        System.out.println(Defender);
+        System.out.println("fffff\n\n");
+        for(Unit unit1:allUnits)
+            System.out.println(unit1);
+
+        /*
+        unit = new Unit();
+        unit.setValues(Shop.getInstance().getUnitByName("Patriot Missile"));
+        unit.setPosition(new Point(499,500));
+        unit.AcceptMovement(new FixedPosition());
+        unit.AcceptTactic(new LowestHealthAttack());
+        unit.setRole(Player.TeamRole.Defender);
+        Defender.addArmy(unit);
+
+         */
+
+        Terrain t = new Terrain(new Point(1000,500),2,50,"vally");
+        terrains.add(t );
     }
 
     public PlayerIterator playerIterator() {
         if (temp == null)
             return temp = new PlayerIterator();
         return temp;
+    }
+
+    public String getGameStateName() {
+        return GameState.name();
+
+    }
+
+    public void setGameStateName(String stateName) {
+        this.setGameState(States.valueOf(stateName));
     }
 
     class PlayerIterator implements Iterator<Player> {

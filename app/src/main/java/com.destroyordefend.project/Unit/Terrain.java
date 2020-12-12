@@ -16,6 +16,15 @@ public class Terrain implements Barrier{
     public Terrain(){
         id = IdGenerator.generate(this);
     }
+
+    public Terrain(Point point, int speedFactory, int radius, String name) {
+        this.point = point;
+        this.speedFactory = speedFactory;
+        this.radius = radius;
+        this.name = name;
+        id = IdGenerator.generate(this);
+    }
+
     @Override
     public boolean isAlive() {
         return health != 0;
@@ -36,7 +45,6 @@ public class Terrain implements Barrier{
     }
 
     public int getSpeedFactory() {
-        System.out.println("Factory " + speedFactory);
         return speedFactory;
     }
 
@@ -49,7 +57,8 @@ public class Terrain implements Barrier{
         this.point = point;
         this.speedFactory = speedFactory;
         this.name = name;
-        this.radius=10;
+        this.radius=50;
     }
+
 
 }

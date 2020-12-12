@@ -13,4 +13,9 @@ public class PriorityAttack implements Tactic{
         Tactic.updateRange(unit);
         //todo:??
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

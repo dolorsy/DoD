@@ -15,12 +15,16 @@ public class Point implements Comparable<Point> {
         this(p.x, p.y);
     }
 
+
+
     @Override
     public String toString() {
         return "" + '(' + x + ',' + y + ')';
     }
 
     public void setPoint(Point n) {
+        if(n == null)
+            n = new Point(-100,-100);
         this.x = n.getX();
         this.y = n.getY();
     }
@@ -61,5 +65,4 @@ public class Point implements Comparable<Point> {
             out = Integer.compare(y, o.y);
         return out;
     }
-
 }

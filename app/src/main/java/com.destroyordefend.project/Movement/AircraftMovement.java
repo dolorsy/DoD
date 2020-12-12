@@ -1,13 +1,13 @@
 package com.destroyordefend.project.Movement;
 
+import com.destroyordefend.project.Core.Game;
 import com.destroyordefend.project.Core.Point;
 import com.destroyordefend.project.Unit.Unit;
+import com.destroyordefend.project.utility.Log;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Stack;
 
-import static com.destroyordefend.project.Core.Game.game;
+import static com.destroyordefend.project.Core.Game.getGame;
 
 public class AircraftMovement implements Movement {
     private Stack<Point> track = new Stack<>();
@@ -15,19 +15,37 @@ public class AircraftMovement implements Movement {
 
 
 
-    public AircraftMovement(Unit airport){
-        track.add(airport.getPosition());
-        track.add(game.getBase().getPosition());
-        this.airport = airport.getPosition();
+    public AircraftMovement(Point airport){
+        track.add(airport);
+        track.add(Game.getGame().getBase().getPosition());
+        this.airport = airport;
     }
 
     public void updateTrack(){
         track.add(airport);
-        track.add(game.getBase().getPosition());
+        track.add(getGame().getBase().getPosition());
+    }
+
+    @Override
+    public void StartMove(Unit unit) {
+        Point p = this.GetNextPoint(unit);
+        unit.setPosition(p);
+
+
+        Log.move(unit);
+    }
+
+    @Override
+    public void addTarget(Point p, Unit u) {
+
+    }
+    public void GoToAirPort(){
+        track.pop();
     }
 
     @Override
     public Point GetNextPoint(Unit unit) {
+        unit.getTactic().SortMap(unit);
         if(track.peek().equals(unit.getPosition()))
             track.pop();
         if( track.empty())
@@ -41,9 +59,16 @@ public class AircraftMovement implements Movement {
         return track;
     }
 
-    @Override
-    public boolean SetNextPoint(Unit unit) {
 
-        return false;
+    @Override
+    public Point getTarget() {
+        return track.peek();
+    }
+
+    @Override
+    public String toString() {
+        return "AircraftMovement{" +
+                "airport=" + airport +
+                '}';
     }
 }

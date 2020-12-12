@@ -1,10 +1,6 @@
 package com.destroyordefend.project.Unit;
 
-import android.util.Log;
-
 import com.destroyordefend.project.Core.Point;
-
-import static android.content.ContentValues.TAG;
 
 public interface Barrier {
     boolean isAlive();
@@ -18,19 +14,18 @@ public interface Barrier {
     String getName();
 
     default boolean isSharedWith(Barrier b) {
-
         if (getPosition() == null || b == null || b.getPosition() == null)
             return false;
         return !(
-                this.getUp() <= b.getDown() ||
-                        this.getDown() >= b.getUp() ||
+                this.getUp() >= b.getDown() ||
+                        this.getDown() <= b.getUp() ||
                         this.getRight() <= b.getLeft() ||
                         this.getLeft() >= b.getRight()
         );
     }
 
-    default boolean is(String type) {
-        return getName().equals(type);
+    default boolean is(String name) {
+        return getName().equals(name);
     }
 
     default int getLeft() {
@@ -41,12 +36,10 @@ public interface Barrier {
         return getPosition().getX() + this.getRadius();
     }
 
-    default int getUp() {
-        return getPosition().getY() + this.getRadius();
-    }
+    default int getUp() { return getPosition().getY() - this.getRadius(); }
 
     default int getDown() {
-        return getPosition().getY() - this.getRadius();
+        return getPosition().getY() + this.getRadius();
     }
 
     default Point getDownRightCorner() {

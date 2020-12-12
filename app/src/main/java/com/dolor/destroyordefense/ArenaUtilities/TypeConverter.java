@@ -21,7 +21,9 @@ class TypeConverter {
     int toPixel() {
         if (type == Type.point) {
             type = Type.pixel;
-            value *= square;
+            value *= (double) (square) ;
+
+
         }
         return value;
     }

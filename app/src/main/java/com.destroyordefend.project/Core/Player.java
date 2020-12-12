@@ -15,10 +15,20 @@ public class Player {
     private String name;
     private TreeSet<Unit> army;
 
+    public void setRole(TeamRole role) {
+        this.role = role;
+    }
+
+
     public Player() {
         id = IdGenerator.generate(this);
         army = new TreeSet<>((v1, v2) -> 1);
 
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" + "Points=" + Points + ", canBuy=" + canBuy + ", id=" + id + ", role=" + role + ", name='" + name + '\'' + ", army=" + army + '}';
     }
 
     public Player(int points, TeamRole role, String name) {
@@ -85,6 +95,7 @@ public class Player {
     }
 
 }
+
 
 class NoEnoughPointsException extends Exception {
     NoEnoughPointsException(String message) {

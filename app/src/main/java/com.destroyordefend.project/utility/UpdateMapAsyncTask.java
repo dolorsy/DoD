@@ -1,6 +1,7 @@
 package com.destroyordefend.project.utility;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -32,10 +33,15 @@ public class UpdateMapAsyncTask {
 
     public static void invokeUpdatePosition()
     {
-        System.out.println("Move Thread name: " + updatePositionQueue.size()  + "  " + Thread.currentThread().getName());
-        for(Runnable updatePosition : updatePositionQueue) {
-            updatePosition.run();
+        try {
+            for(Runnable updatePosition : updatePositionQueue) {
+                updatePosition.run();
+            }
+        }catch (ConcurrentModificationException exception){
+         clearQueue();
+
         }
+
         clearQueue();
     }
 

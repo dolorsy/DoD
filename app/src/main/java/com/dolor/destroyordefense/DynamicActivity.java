@@ -40,13 +40,9 @@ MediaPlayer mp;
     }
 
     private void initList() {
-        myList.add("Movement");
-        myList.add("Attack");
-        myList.add("valley");
-        myList.add("Lowest Health Tactic");
-        myList.add("Test 1 ");
-        myList.add("Test 1 ");
-        myList.add("Test 1 ");
+        myList.add("Movment");
+        myList.add("Terrain");
+        myList.add("War");
 
     }
 

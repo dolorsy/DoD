@@ -15,8 +15,14 @@ import com.destroyordefend.project.Core.Game;
 import com.destroyordefend.project.Core.Player;
 import com.destroyordefend.project.Core.Point;
 import com.destroyordefend.project.Core.Shop;
+import com.destroyordefend.project.Movement.AircraftMovement;
 import com.destroyordefend.project.Movement.FixedPatrol;
+import com.destroyordefend.project.Movement.FixedPosition;
+import com.destroyordefend.project.Movement.Movement;
 import com.destroyordefend.project.Movement.ToTarget;
+import com.destroyordefend.project.Tactic.AirAttack;
+import com.destroyordefend.project.Tactic.RandomAttack;
+import com.destroyordefend.project.Unit.Terrain;
 import com.destroyordefend.project.Unit.Unit;
 import com.dolor.destroyordefense.ArenaUtilities.ArenaActivity;
 
@@ -55,26 +61,151 @@ public class DynamicList extends RecyclerView.Adapter<DynamicList.DynamicViewHol
 
         holder.itemText.setOnClickListener(v -> {
 
-            Unit u = new Unit();
-            Unit.UnitValues values = Shop.getInstance().getUnitByName("Mirage tank");
-            u.setValues(values);
-            u.setPosition(new Point(500,500));
-            u.AcceptMovement(new FixedPatrol(2000));
-           // Game.getGame().getAllUnits().add(u);
-/*
 
-            u = new Unit();
-            values = Shop.getInstance().getUnitByName("Mirage tank");
-            u.setPosition(new Point(500,500));
-            u.AcceptMovement(new FixedPatrol(1000));
-            Game.getGame().getAllUnits().add(u);
+        switch ( myList.get(position)){
+            case "Movment":
+                Movment();
+                break;
+            case "Terrain":
+                Terrain();
+                break;
+            case "War":
+                War();
+                break;
 
 
-*/
+
+        }
             context.startActivity(new Intent(context, ArenaActivity.class).putExtra("treeSet", 0).setFlags(FLAG_ACTIVITY_NEW_TASK));
+
         });
 
         holder.itemText.setText(myList.get(position));
+
+    }
+
+    private void War(){
+
+
+        Terrain t;
+
+        t = new Terrain(new Point(1200,550),2,100,"vally");
+        Game.getGame().getTerrains().add(t);
+        t = new Terrain(new Point(1000,550),2,100,"river");
+        Game.getGame().getTerrains().add(t);
+
+
+        Player Defender = new Player();
+        Player Attacker = new Player();
+        Defender.setRole(Player.TeamRole.Defender);
+        Attacker.setRole(Player.TeamRole.Attacker);
+        Game.getGame().getDefenders().addPlayer(Defender);
+        Game.getGame().getAttackers().addPlayer(Attacker);
+
+
+        Unit u = new Unit();
+        Unit.UnitValues values;
+
+        values = Shop.getInstance().getBaseValues();
+        Game.getGame().getBase().setRole(Player.TeamRole.Defender);
+        Game.getGame().getBase().setValues(values);
+        Game.getGame().getBase().AcceptMovement(new FixedPosition());
+        Game.getGame().getBase().setPosition(new Point(1200,1100));
+        Game.getGame().getBase().setRole(Player.TeamRole.Defender);
+        Defender.addArmy(Game.getGame().getBase());
+
+        u = new Unit();
+        values = Shop.getInstance().getUnitByName("Prism Tower");
+        u.setValues(values);
+        u.setPosition(new Point(1000,1000));
+        u.AcceptMovement(new FixedPosition());
+        u.AcceptTactic(new RandomAttack());
+        u.setRole(Player.TeamRole.Defender);
+        Defender.addArmy(u);
+        Game.getGame().getAllUnits().add(u);
+
+/*
+         u = new Unit();
+        values = Shop.getInstance().getUnitByName("Black Eagle");
+        u.setValues(values);
+        u.setPosition(new Point(1200,300));
+        u.AcceptMovement(new AircraftMovement(new Point(1200,300)));
+        u.AcceptTactic(new RandomAttack());
+        u.setRole(Player.TeamRole.Attacker);
+        Attacker.addArmy(u);
+        Game.getGame().getAllUnits().add(u);
+
+*/
+        u = new Unit();
+        values = Shop.getInstance().getUnitByName("Mirage tank");
+        u.setValues(values);
+        u.setPosition(new Point(1200,400));
+        u.AcceptMovement(new ToTarget(Game.getGame().getBase()));
+        u.AcceptTactic(new RandomAttack());
+        u.setRole(Player.TeamRole.Attacker);
+        Attacker.addArmy(u);
+        Game.getGame().getAllUnits().add(u);
+        Game.getGame().getAttackers().addPlayer(Attacker);
+
+    }
+    private void Movment(){
+
+
+
+        Game.getGame().getAllUnits().clear();
+        Unit u = new Unit();
+        Player Defender = new Player();
+        Unit.UnitValues values;
+        values = Shop.getInstance().getBaseValues();
+        u.setValues(values);
+        u.setPosition(new Point(1000,1000));
+        u.AcceptMovement(new FixedPosition());
+        u.setRole(Player.TeamRole.Defender);
+        Defender.addArmy(u);
+
+        u = new Unit();
+         values = Shop.getInstance().getUnitByName("Mirage tank");
+        u.setValues(values);
+        u.setPosition(new Point(900,900));
+        u.AcceptMovement(new FixedPatrol(200));
+        u.AcceptTactic(new RandomAttack());
+        Defender.addArmy(u);
+        Game.getGame().getAllUnits().add(u);
+        Game.getGame().getDefenders().addPlayer(Defender);
+
+    }
+
+    private void Terrain(){
+        Terrain t;
+
+        t = new Terrain(new Point(1200,550),2,100,"vally");
+        Game.getGame().getTerrains().add(t);
+        t = new Terrain(new Point(1000,550),2,100,"river");
+        Game.getGame().getTerrains().add(t);
+
+
+        Game.getGame().getAllUnits().clear();
+        Player Defender = new Player();
+        Unit.UnitValues values;
+        values = Shop.getInstance().getBaseValues();
+        Game.getGame().getBase().setValues(values);
+        Game.getGame().getBase().AcceptMovement(new FixedPosition());
+        Game.getGame().getBase().setPosition(new Point(1200,1100));
+        Game.getGame().getBase().setRole(Player.TeamRole.Defender);
+        Defender.addArmy(Game.getGame().getBase());
+
+        Unit u = new Unit();
+        values = Shop.getInstance().getUnitByName("Mirage tank");
+        u.setValues(values);
+        u.setPosition(new Point(1200,400));
+        u.AcceptMovement(new ToTarget(Game.getGame().getBase()));
+        u.AcceptTactic(new RandomAttack());
+        u.setRole(Player.TeamRole.Attacker);
+        Defender.addArmy(u);
+        Game.getGame().getAllUnits().add(u);
+        Game.getGame().getAttackers().addPlayer(Defender);
+
+
     }
 
     @Override
